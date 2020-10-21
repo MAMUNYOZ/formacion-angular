@@ -2607,6 +2607,18 @@ textarea.form-control {
   color: #000;
 }
 
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button
+{
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number]
+{
+  -moz-appearance: textfield;
+}
+
 .form-group--select {
   position: relative;
 }
@@ -3428,6 +3440,11 @@ textarea.form-control {
 
 .pagination li:last-child {
   margin-right: 0;
+}
+
+.page-item.active .page-link{
+  background-color: #fcb800;
+  color: #000;
 }
 
 .ps-pagination {

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Path } from '../../config';
+import { Search } from '../../functions';
 
 declare var jQuery:any;
 declare var $:any;
@@ -60,6 +61,21 @@ export class HeaderMobileComponent implements OnInit {
 			$(this).parent().children('ul').toggle();
 
 		})
+
+	}
+
+	/*=============================================
+	Declaramos función del buscador
+	=============================================*/
+
+	goSearch(search:String){
+
+		if(search.length == 0 || Search.fnc(search) == undefined){
+
+			return;
+		}
+
+		window.open(`search/${Search.fnc(search)}`, '_top')
 
 	}
 

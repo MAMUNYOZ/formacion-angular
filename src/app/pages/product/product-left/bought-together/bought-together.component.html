@@ -1,0 +1,54 @@
+<div class="ps-block--bought-toggether">
+
+    <h4>Frequently Bought Together</h4>
+
+    <div class="ps-block__content">
+
+        <div class="ps-block__items">
+
+            <div 
+			*ngFor="let product of products; let i = index; let lastIndex = last"	
+            class="ps-block__item">
+
+                <div class="ps-product ps-product--simple">
+
+                    <div class="ps-product__thumbnail">
+
+                    	<a href="product/{{product.url}}">
+                    		<img src="{{path}}img/products/{{product.category}}/{{product.image}}" alt="{{product.name}}">
+                    	</a>
+
+                    </div>
+
+                    <div class="ps-product__container">
+
+                        <div class="ps-product__content">
+                        	<a class="ps-product__title" href="product/{{product.url}}">{{product.name}}</a>
+
+                            <div class="endPrice" [innerHTML]="price[i][0]"></div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {{ lastIndex ? callback() : ""}}
+
+            </div>
+
+         
+            <div class="ps-block__item ps-block__total">
+
+                <p>Total Price:<strong></strong></p>
+
+                <a class="ps-btn" href="#">Add All to cart</a>
+                <a class="ps-btn ps-btn--gray ps-btn--outline" href="#">Add All to whishlist</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

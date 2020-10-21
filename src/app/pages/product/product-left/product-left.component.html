@@ -1,0 +1,346 @@
+
+
+<div class="ps-product--detail ps-product--fullwidth">
+
+	<!--=====================================
+	Product Header
+	======================================--> 
+
+    <div class="ps-product__header">
+
+    	<!--=====================================
+		Gallery
+		======================================--> 
+
+        <div class="ps-product__thumbnail" data-vertical="true">
+
+            <figure>
+
+                <div class="ps-wrapper">
+
+                    <div class="ps-product__gallery" data-arrow="true">
+
+                        <div 
+                        *ngFor="let image of gallery[0]"
+                        class="item">
+                        	<a href="{{path}}img/products/{{product[0].category}}/{{image}}">
+                        		<img src="{{path}}img/products/{{product[0].category}}/{{image}}" alt="{{product[0].name}}">
+                        	</a>
+
+                         
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </figure>
+
+            <div class="ps-product__variants" data-item="4" data-md="4" data-sm="4" data-arrow="false">
+                <div 
+                *ngFor="let image of gallery[0]; let lastIndex = last"
+                class="item">
+                	<img src="{{path}}img/products/{{product[0].category}}/{{image}}" alt="{{product[0].name}}">
+
+                {{ lastIndex ? callbackGallery() : ""}}
+                </div>          
+
+            </div>
+
+        </div><!-- End Gallery -->
+
+        <!--=====================================
+		Product Info
+		======================================--> 
+
+        <div 
+        *ngFor="let p of product; let i = index"
+        class="ps-product__info">
+
+            <h1>{{p.name}}</h1>
+
+            <div class="ps-product__meta">
+
+                <div class="ps-product__rating">
+
+                    <select class="ps-rating" data-read-only="true">
+
+                        <option 
+                        *ngFor="let review of reviews[i]; let f = index"
+                        [value]="review">{{f+1}}</option>
+                      
+
+                    </select>
+
+                    <span>{{rating[i]}}</span>
+
+                </div>
+
+            </div>
+
+            <div [innerHTML]="price[i][0]"></div>
+
+            <div class="ps-product__desc">
+
+                <p> 
+
+                	Sold By:<a class="mr-20" href="shop-default.html"><strong>{{p.store}}</strong></a> 
+
+                	Status:
+                    <strong 
+                    *ngIf="p.stock > 0"
+                    class="ps-tag--in-stock"> In stock</strong>
+
+                    <strong 
+                    *ngIf="p.stock == 0"
+                    class="ps-tag--out-stock"> Out stock</strong>
+
+                </p>
+
+                <div class="ps-list--dot" [innerHTML]="p.summary"></div>
+
+                <!--=====================================
+                VIDEO
+                ======================================-->
+
+                 <iframe 
+                    class="mb-3"
+                    [attr.src]="video | urlsecure"
+                    height="360"
+                    frameborder="0" 
+                    allowfullscreen></iframe> 
+
+            </div>
+
+            <div class="ps-product__variations">
+            
+                <div [innerHTML]="p.specification"></div>
+               
+            </div>
+
+            <div 
+            *ngIf="p.offer != ''"
+            class="ps-product__countdown">
+
+                <figure>
+
+                    <figcaption> Don't Miss Out! This promotion will expires in</figcaption>
+
+                    <ul class="ps-countdown" [attr.data-time]="countd[i]">
+
+                        <li><span class="days"></span>
+                            <p>Days</p>
+                        </li>
+
+                        <li><span class="hours"></span>
+                            <p>Hours</p>
+                        </li>
+
+                        <li><span class="minutes"></span>
+                            <p>Minutes</p>
+                        </li>
+
+                        <li><span class="seconds"></span>
+                            <p>Seconds</p>
+                        </li>
+
+                    </ul>
+
+                </figure>
+
+                <figure>
+
+                    <figcaption>Sold Items</figcaption>
+
+                    <div class="ps-product__progress-bar ps-progress" [attr.data-value]="p.stock">
+
+                        <div class="ps-progress__value"><span></span></div>
+
+                        <p><b>{{100-p.stock}}/100</b> Sold</p>
+
+                    </div>
+
+                </figure>
+
+            </div>
+
+            <div class="ps-product__shopping">
+
+                <figure>
+
+                    <figcaption>Quantity</figcaption>
+
+                    <div class="form-group--number quantity">
+
+                        <button class="up">
+                        	<i class="fa fa-plus"></i>
+                        </button>
+
+                        <button class="down">
+                        	<i class="fa fa-minus"></i>
+                        </button>
+
+                        <input class="form-control px-5" type="number" value="1" min="1" max="9" step="1">
+
+                    </div>
+
+                </figure>
+
+                <a class="ps-btn ps-btn--black" href="#">Add to cart</a>
+
+                <a class="ps-btn" href="#">Buy Now</a>
+
+                <div class="ps-product__actions">
+
+                	<a href="#">
+                		<i class="icon-heart"></i>
+                	</a>
+
+                </div>
+
+            </div>
+
+            <div class="ps-product__specification">
+
+            	<a class="report" href="#">Report Abuse</a> 
+
+                <p class="categories">
+
+                	<strong> Categories:</strong>
+
+                	<a href="products/{{p.category}}">{{p.category}}</a>,
+                    <a href="products/{{p.sub_category}}">{{p.sub_category}}</a>,
+                    <a href="search/{{p.title_list}}">{{p.title_list}}</a>
+
+                </p>
+
+                <p class="tags"><strong> Tags</strong>
+
+                	<a 
+                    *ngFor="let tag of tags"
+                    href="search/{{tag}}"> {{tag}}</a>
+
+                </p>
+
+            </div>
+
+            <div class="ps-product__sharing">
+
+            	<a class="facebook" href="#">
+            		<i class="fab fa-facebook"></i>
+            	</a>
+
+            	<a class="twitter" href="#">
+            		<i class="fab fa-twitter"></i>
+            	</a>
+
+
+            	<a class="linkedin" href="#">
+            		<i class="fab fa-linkedin"></i>
+            	</a>
+
+            	<a class="instagram" href="#">
+            		<i class="fab fa-instagram"></i>
+            	</a>
+
+            </div>
+
+        </div> <!-- End Product Info -->
+
+    </div> <!-- End Product header -->
+
+	<!--=====================================
+	Product Content
+	======================================--> 
+
+    <div 
+    *ngFor="let p of product; let i = index; let lastIndex = last"
+    class="ps-product__content ps-tab-root">
+
+        <!--=====================================
+        Bought Together
+        ======================================--> 
+
+        <app-bought-together [childItem]="p"></app-bought-together>
+
+        <ul class="ps-tab-list">
+
+            <li class="active"><a href="#tab-1">Description</a></li>
+            <li><a href="#tab-2">Specification</a></li>
+            <li><a href="#tab-3">Vendor</a></li>
+            <li><a href="#tab-4">Reviews ({{totalReviews}})</a></li>
+            <li><a href="#tab-5">Questions and Answers</a></li>
+
+        </ul>
+
+        <div class="ps-tabs">
+
+            <!--=====================================
+            Description
+            ======================================--> 
+
+            <div class="ps-tab active" id="tab-1">
+
+                <div [innerHTML]="p.description"></div>
+
+            </div>
+
+            <!--=====================================
+            Details
+            ======================================--> 
+
+            <div class="ps-tab" id="tab-2">
+
+                 <div [innerHTML]="p.details"></div>
+
+            </div>
+
+            <!--=====================================
+            Store
+            ======================================--> 
+
+            <div class="ps-tab" id="tab-3">
+
+                <app-vendor-store [childItem]="p.store"></app-vendor-store>
+
+            </div>
+
+            <!--=====================================
+            Reviews
+            ======================================--> 
+
+            <div class="ps-tab" id="tab-4">
+
+                <app-reviews [childItem]="p"></app-reviews>
+
+            </div>
+
+            <!--=====================================
+            Messages
+            ======================================--> 
+
+            <div class="ps-tab" id="tab-5">
+
+                <div class="ps-block--questions-answers">
+
+                    <h3>Questions and Answers</h3>
+
+                    <div class="form-group">
+
+                        <input class="form-control" type="text" placeholder="Have a question? Search for answer?">
+                    
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    
+    {{ lastIndex ? callback() : ""}}
+    </div><!--  End product content -->
+
+</div>
+
+

@@ -11,9 +11,15 @@ export class SubCategoriesService {
 
   	constructor(private http:HttpClient) { }
 
-  	getFilterData(orderBy, equalTo){
+  	getFilterData(orderBy:String, equalTo:String){
 
 		return this.http.get(`${this.api}sub-categories.json?orderBy="${orderBy}"&equalTo="${equalTo}"&print=pretty`);
+
+	}
+
+	patchData(id:String, value:Object){
+
+		return this.http.patch(`${this.api}sub-categories/${id}.json`,value);
 
 	}
 }
