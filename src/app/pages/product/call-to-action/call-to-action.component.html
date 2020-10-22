@@ -26,7 +26,7 @@
 
 	                    <div class="p-0 mr-5" [innerHTML]="price[i]"></div>
 
-                        <a class="ps-btn" href="#"> Add to Cart</a>
+                        <a class="ps-btn" style="cursor:pointer" (click)="addShoppingCart(product.url, 1, [])"> Añadir a la cesta</a>
 
                     </div>
 

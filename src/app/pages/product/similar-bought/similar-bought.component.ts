@@ -5,8 +5,9 @@ import { Rating,
          DinamicReviews, 
          DinamicPrice   } from '../../../functions';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ProductsService } from '../../../services/products.service';
+import { UsersService } from '../../../services/users.service';
 
 @Component({
   selector: 'app-similar-bought',
@@ -15,20 +16,22 @@ import { ProductsService } from '../../../services/products.service';
 })
 export class SimilarBoughtComponent implements OnInit {
 
-  path:String = Path.url;	
-  	products:Array<any> = [];
-  	rating:Array<any> = [];
-  	reviews:Array<any> = [];
-  	price:Array<any> = [];
-  	render:Boolean = true;
-  	cargando:Boolean = false;
+  path:string = Path.url;	
+  	products:any[] = [];
+  	rating:any[] = [];
+  	reviews:any[] = [];
+  	price:any[] = [];
+  	render:boolean = true;
+  	preload:boolean = false;
 
   	constructor(private activateRoute: ActivatedRoute,
-  		        private productsService: ProductsService) { }
+  		        private productsService: ProductsService,
+  		        private usersService: UsersService,
+  		        private router: Router) { }
 
   	ngOnInit(): void {
 
-  		this.cargando = true;
+  		this.preload = true;
 
   		this.productsService.getFilterData("url", this.activateRoute.snapshot.params["param"]) 
   		.subscribe( resp => { 
@@ -100,7 +103,7 @@ export class SimilarBoughtComponent implements OnInit {
 
 	        	this.price.push(DinamicPrice.fnc(this.products[index]));
 				
-				this.cargando = false;
+				this.preload = false;
 			}
 
 
@@ -122,5 +125,33 @@ export class SimilarBoughtComponent implements OnInit {
   			},1000)
 
   		}
+	}
+
+	/*=============================================
+	Función para agregar productos a la lista de deseos	
+	=============================================*/
+
+	addWishlist(product){		  
+		this.usersService.addWishlist(product);
+	}
+
+	/*=============================================
+	Función para agregar productos al carrito de compras
+	=============================================*/
+
+	addShoppingCart(product, unit, details){
+
+		let url = this.router.url;
+
+		let item = {
+		
+			product: product,
+			unit: unit,
+			details: details,
+			url:url
+		}
+
+		this.usersService.addSoppingCart(item);
+
 	}
 }

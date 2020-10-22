@@ -9,11 +9,16 @@ import { Rating,
 	     Tabs,
        SlickConfig,
        ProductLightbox,
-       Quantity } from '../../../functions';
+       Quantity,
+       Tooltip } from '../../../functions';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { ProductsService } from '../../../services/products.service';
+import { UsersService } from '../../../services/users.service';
+
+declare var jQuery:any;
+declare var $:any;
 
 @Component({
   selector: 'app-product-left',
@@ -22,27 +27,31 @@ import { ProductsService } from '../../../services/products.service';
 })
 export class ProductLeftComponent implements OnInit {
 
-  	path:String = Path.url;	
-  	product:Array<any>= [];
-  	rating:Array<any> = [];
-	  reviews:Array<any> = [];
-	  price:Array<any> = [];
-	  cargando:Boolean = false;
-	  render:Boolean = true;
-	  countd:Array<any> = [];
-    gallery:Array<any> = [];
-    renderGallery:Boolean = true;
+  	path:string = Path.url;	
+  	product:any[]= [];
+  	rating:any[] = [];
+	reviews:any[] = [];
+	price:any[] = [];
+	preload:boolean = false;
+	render:boolean = true;
+	countd:any[] = [];
+    gallery:any[] = [];
+    renderGallery:boolean = true;
     video:string = null;
-    tags:String = null;
-    totalReviews:String;
+    tags:string = null;
+    totalReviews:string;
+    offer:boolean = false;
+    quantity:number = 1;
 
 
   	constructor(private activateRoute: ActivatedRoute,
-  		        private productsService: ProductsService) { }
+  		        private productsService: ProductsService,
+              private usersService: UsersService,
+              private router: Router) { }
 
   	ngOnInit(): void {
 
-  		this.cargando = true;
+  		this.preload = true;
   	
   		this.productsService.getFilterData("url", this.activateRoute.snapshot.params["param"])  
   		.subscribe( resp => {
@@ -94,18 +103,34 @@ export class ProductLeftComponent implements OnInit {
     	
     	if(this.product[index].offer != ""){
 
-    		const date = JSON.parse(this.product[index].offer)[2]; 
-         
-        this.countd.push(
+        let today = new Date();
 
-        	new Date(
-        		parseInt(date.split("-")[0]),
-        		parseInt(date.split("-")[1])-1,
-        		parseInt(date.split("-")[2])
+        let offerDate = new Date(
 
-      	  )
+          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[0]),
+          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[1])-1,
+          parseInt(JSON.parse(this.product[index].offer)[2].split("-")[2])
 
         )
+
+        if(today < offerDate){
+
+          this.offer = true;
+
+      		const date = JSON.parse(this.product[index].offer)[2]; 
+           
+          this.countd.push(
+
+          	new Date(
+          		parseInt(date.split("-")[0]),
+          		parseInt(date.split("-")[1])-1,
+          		parseInt(date.split("-")[2])
+
+        	  )
+
+          )
+
+        }
 
     	}
 
@@ -138,16 +163,20 @@ export class ProductLeftComponent implements OnInit {
       this.tags = this.product[index].tags.split(",");
 
       /*=============================================
-        Total Reviews
-        =============================================*/
-        this.totalReviews = JSON.parse(this.product[index].reviews).length;
+      Total Reviews
+      =============================================*/
+      this.totalReviews = JSON.parse(this.product[index].reviews).length;
 
 
-			this.cargando = false;
+			this.preload = false;
 	
 		})
 
 	}
+
+    /*=============================================
+    Función Callback()
+    =============================================*/ 
 
 	callback(){
 
@@ -159,21 +188,277 @@ export class ProductLeftComponent implements OnInit {
 			CountDown.fnc();
 			ProgressBar.fnc();
 			Tabs.fnc();
-      Quantity.fnc();
+            Quantity.fnc();
+            Tooltip.fnc();
+
+            /*=============================================
+            Agregamos detalles del producto
+            =============================================*/ 
+
+            if($(".ps-product__variations").attr("specification") != ""){
+
+                /*=============================================
+                Recorremos el array de objetos de detalles
+                =============================================*/ 
+ 
+                JSON.parse($(".ps-product__variations").attr("specification")).forEach((detail, index)=>{
+
+                    /*=============================================
+                    Seleccionamos el nombre de propiedad de cada detalle
+                    =============================================*/ 
+                
+                    let property = Object.keys(detail).toString(); 
+
+                    /*=============================================
+                    Construimos el HTML que va a aparecer en la vista
+                    =============================================*/ 
+               
+                    let figure = `<figure class="details${index}">
+                    
+                                    <figcaption>${property}: <strong>Choose an option</strong></figcaption>
+
+                                    <div class="d-flex">
+                                    
+                                    </div>
+
+                                </figure>`
+
+                    /*=============================================
+                    Pintamos en la vista el HTML de figure
+                    =============================================*/ 
+
+                    $(".ps-product__variations").append(`
+                        
+                        ${figure}
+
+                    `)
+
+                    for(const i in detail[property]){
+
+                        if(property == "Color"){
+
+                            $(`.details${index} .d-flex`).append(`
+
+                                 <div
+                                    class="rounded-circle mr-3 details ${property}"
+                                    detailType="${property}"
+                                    detailValue="${detail[property][i]}"
+                                    data-toggle="tooltip" title="${detail[property][i]}"
+                                    style="background-color:${detail[property][i]}; width:30px; height:30px; cursor:pointer; border:1px solid #bbb"></div>
+
+                            `)
+
+                        }else{
+
+                            $(`.details${index} .d-flex`).append(`
+
+                                <div
+                                    class="py-2 px-3 mr-3 details ${property}"
+                                    detailType="${property}"
+                                    detailValue="${detail[property][i]}"
+                                    data-toggle="tooltip" title="${detail[property][i]}"
+                                    style="cursor:pointer; border:1px solid #bbb">${detail[property][i]}</div>
+                            `)
+
+
+                        }
+
+                    }
+
+               })
+
+            }
+
+            /*=============================================
+            Agregamos detalles del producto al localstorage
+            =============================================*/ 
+
+            $(document).on("click", ".details", function(){
+
+                /*=============================================
+                Señalar el detalle escogido
+                =============================================*/ 
+
+                let details = $(`.details.${$(this).attr("detailType")}`);
+
+                for(let i = 0; i < details.length; i++){
+
+                    $(details[i]).css({"border":"1px solid #bbb"})
+
+                }
+
+                $(this).css({"border":"3px solid #bbb"})
+
+                /*=============================================
+                Preguntar si existen detalles en el LocalStorage
+                =============================================*/ 
+
+                if(localStorage.getItem("details")){
+
+                    let details = JSON.parse(localStorage.getItem("details"));
+
+                    for(const i in details){
+
+                        details[i][$(this).attr("detailType")] = $(this).attr("detailValue");
+
+                        localStorage.setItem("details", JSON.stringify(details))
+                    }
+
+                }else{
+
+                    localStorage.setItem("details", `[{"${$(this).attr("detailType")}":"${$(this).attr("detailValue")}"}]`)
+
+                }
+   
+            })
+
 		}
-	}
+	
+    }
 
-  callbackGallery(){
+    /*=============================================
+    Función Callback Galería
+    =============================================*/ 
 
-    if(this.renderGallery){
+    callbackGallery(){
 
-      this.renderGallery = false;
+        if(this.renderGallery){
 
-      SlickConfig.fnc()
-      ProductLightbox.fnc()
+            this.renderGallery = false;
+
+            SlickConfig.fnc()
+            ProductLightbox.fnc()
+
+        }
 
     }
 
-  }
+    /*=============================================
+    Función para agregar productos a la lista de deseos 
+    =============================================*/
+
+    addWishlist(product){     
+        this.usersService.addWishlist(product);
+    }
+
+    /*=============================================
+    Función cambio de cantidad
+    =============================================*/ 
+
+    changeQuantity(quantity, unit, move){
+
+        let number = 1;
+
+        /*=============================================
+        Controlar máximos y mínimos de la cantidad
+        =============================================*/ 
+
+        if(Number(quantity) > 9){
+
+            quantity = 9;
+
+        }
+
+        if(Number(quantity) < 1){
+
+            quantity = 1;
+        }
+
+        /*=============================================
+        Modificar cantidad de acuerdo a la dirección
+        =============================================*/ 
+
+        if(move == "up" && Number(quantity) < 9){
+
+            number = Number(quantity)+unit;
+
+        }
+
+        else if(move == "down" && Number(quantity) > 1){
+
+             number = Number(quantity)-unit;
+
+        }else{
+
+            number = Number(quantity);
+
+        }
+
+        $(".quantity input").val(quantity);
+
+        this.quantity = number;
+
+
+    }
+
+    /*=============================================
+    Función para agregar productos al carrito de compras
+    =============================================*/
+
+    addShoppingCart(product, unit, details){
+
+        /*=============================================
+        Preguntamos si existe detalles en localStorage
+        =============================================*/
+
+        if(localStorage.getItem("details")){
+
+            details = localStorage.getItem("details");
+
+        }
+
+        /*=============================================
+        Agregar producto al carrito de compras
+        =============================================*/
+
+        let url = this.router.url;
+
+        let item = {
+
+          product: product,
+          unit: this.quantity,
+          details: details,
+          url:url
+        }
+
+        localStorage.removeItem("details");
+
+        this.usersService.addSoppingCart(item);
+
+    }
+
+    /*=============================================
+    Función para agregar productos al carrito de compras
+    =============================================*/
+
+    buyNow(product, unit, details){
+
+        /*=============================================
+        Preguntamos si existe detalles en localStorage
+        =============================================*/
+
+        if(localStorage.getItem("details")){
+
+            details = localStorage.getItem("details");
+
+        }
+
+        /*=============================================
+        Agregar producto al carrito de compras
+        =============================================*/
+
+        let item = {
+
+          product: product,
+          unit: this.quantity,
+          details: details,
+          url:'checkout'
+        }
+
+        localStorage.removeItem("details");
+
+        this.usersService.addSoppingCart(item);
+
+    }
 
 }

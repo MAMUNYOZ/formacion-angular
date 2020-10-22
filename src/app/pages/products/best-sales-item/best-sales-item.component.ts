@@ -5,11 +5,13 @@ import { OwlCarouselConfig,
 	     Rating, 
 	     DinamicRating, 
 	     DinamicReviews, 
-	     DinamicPrice } from '../../../functions';
+	     DinamicPrice,
+	     Sweetalert } from '../../../functions';
 
 import { ProductsService} from '../../../services/products.service';
+import { UsersService } from '../../../services/users.service';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 declare var jQuery:any;
 declare var $:any;
@@ -21,16 +23,18 @@ declare var $:any;
 })
 export class BestSalesItemComponent implements OnInit {
 
-	path:String = Path.url;	
-	bestSalesItem:Array<any> = [];
-	render:Boolean = true;
-	rating:Array<any> = [];
-	reviews:Array<any> = [];
-	price:Array<any> = [];
-	cargando:Boolean = false;
+	path:string = Path.url;	
+	bestSalesItem:any[] = [];
+	render:boolean = true;
+	rating:any[] = [];
+	reviews:any[] = [];
+	price:any[] = [];
+	cargando:boolean = false;
 
   	constructor(private productsService: ProductsService,
-  		        private activateRoute: ActivatedRoute,) { }
+  		        private activateRoute: ActivatedRoute,
+  		        private usersService: UsersService,
+  		        private router: Router) { }
 
   	ngOnInit(): void {
 
@@ -142,4 +146,33 @@ export class BestSalesItemComponent implements OnInit {
   		}
 
   	}
+
+  	/*=============================================
+	Función para agregar productos a la lista de deseos
+	=============================================*/
+
+	addWishlist(product){
+
+		this.usersService.addWishlist(product);
+	}
+
+	/*=============================================
+	Función para agregar productos al carrito de compras
+	=============================================*/
+
+	addShoppingCart(product, unit, details){
+
+		let url = this.router.url;
+
+		let item = {
+		
+			product: product,
+			unit: unit,
+			details: details,
+			url:url
+		}
+
+		this.usersService.addSoppingCart(item);
+
+	}
 }

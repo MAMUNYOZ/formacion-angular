@@ -1,0 +1,169 @@
+<!--=====================================
+Breadcrumb
+======================================-->  
+
+<div class="ps-breadcrumb">
+
+<div class="container">
+
+    <ul class="breadcrumb">
+
+        <li><a routerLink="/">Home</a></li>
+
+        <li>Cesta de la compra</li>
+
+    </ul>
+
+</div>
+
+</div>
+
+
+<!--=====================================
+Shopping Car
+======================================--> 
+
+<div class="ps-section--shopping ps-shopping-cart">
+
+    <div class="container">
+
+        <div class="ps-section__header">
+
+            <h1>Cesta de la compra</h1>
+
+        </div>
+
+        <div class="ps-section__content">
+
+            <div class="table-responsive">
+
+                <table class="table ps-table--shopping-cart" datatable [dtOptions]="dtOptions" [dtTrigger]="dtTrigger">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>PRODUCTO</th>
+                            <th>PRECIO</th>
+                            <th>ENVÍO</th>
+                            <th>CANTIDAD</th>
+                            <th>TOTAL</th>
+                            <th></th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                    	<tr 
+                    	*ngIf="shoppingCart.length == 0">
+                    		
+                    		<td colspan="6" class="text-center">No hay ningún producto</td>	
+
+                    	</tr>
+
+                        <tr
+						*ngFor="let product of shoppingCart; let lastIndex = last"
+                        >
+                            <td>
+
+                                <div class="ps-product--cart">
+
+                                    <div class="ps-product__thumbnail">
+
+                                        <a href="product/{{product.url}}">
+                                        	<img src="{{path}}img/products/{{product.category}}/{{product.image}}">
+                                        </a>
+
+                                    </div>
+
+                                    <div class="ps-product__content">
+
+                                        <a href="product/{{product.url}}">{{product.name}}</a>
+
+                                        <div [innerHTML]="product.details"></div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td class="ps-product pShoppingCart" [innerHTML]="product.price"></td>
+
+                            <td class="text-center">$<span class="sShoppingCart">{{product.shipping}}</span></td>
+
+
+                            <td>
+
+                                <div class="form-group--number quantity">
+
+                                    <button class="up" (click)="changeQuantity(quantity.value, 1, 'up', product.url, product.listDetails)">
+                                    +</button>
+
+                                    <button class="down" (click)="changeQuantity(quantity.value, 1, 'down', product.url, product.listDetails)">
+                                    -</button>
+
+                                    <input class="form-control qShoppingCart" type="number" value="{{product.quantity}}" min="1" max="9" step="1" #quantity (change)="changeQuantity(quantity.value, 0, null, product.url, product.listDetails)">
+
+                                </div>
+
+                            </td>
+
+                            <td class="subTotalPrice"><div class="spinner-border subTotalPriceM"></div></td>                             
+
+                            <td>
+
+                                <a 
+                                 mwlConfirmationPopover
+                                 [popoverMessage]="popoverMessage"
+                                 placement="left"
+                                 style="cursor:pointer" 
+                                 (confirm)="removeProduct(product.url, product.listDetails)">
+                                    <i class="icon-cross"></i>
+                                </a>
+
+                            </td>
+
+                        {{ lastIndex ? callback() : ""}}
+
+                        </tr>                  
+
+                    </tbody>
+
+                </table>
+
+                <h4 class="d-block d-lg-none text-right text-muted py-3">
+                    Move to <i class="fas fa-long-arrow-alt-right"></i>
+                </h4>
+
+            </div>
+
+            <hr>
+
+            <div 
+             *ngIf="shoppingCart.length > 0"
+            class="d-flex flex-row-reverse">
+              <div [innerHTML]="totalP"></div>             
+            </div>
+
+            <div class="ps-section__cart-actions">
+
+                <a class="ps-btn" routerLink="/">
+                    <i class="icon-arrow-left"></i> Volver
+                </a>
+
+                <a 
+                *ngIf="shoppingCart.length > 0"
+                class="ps-btn" href="checkout">
+                    Proceder a comprar <i class="icon-arrow-right"></i> 
+                </a>
+
+            </div>
+
+        </div> 
+        
+    </div>
+
+</div>

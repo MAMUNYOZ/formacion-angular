@@ -1,6 +1,6 @@
-
-
-<div class="ps-product--detail ps-product--fullwidth">
+<div 
+*ngIf="!preload"
+class="ps-product--detail ps-product--fullwidth">
 
 	<!--=====================================
 	Product Header
@@ -84,16 +84,16 @@
 
                 <p> 
 
-                	Sold By:<a class="mr-20" href="shop-default.html"><strong>{{p.store}}</strong></a> 
+                	vendido por:<a class="mr-20" href="shop-default.html"><strong>{{p.store}}</strong></a> 
 
-                	Status:
+                	Estado:
                     <strong 
                     *ngIf="p.stock > 0"
-                    class="ps-tag--in-stock"> In stock</strong>
+                    class="ps-tag--in-stock"> En stock</strong>
 
                     <strong 
                     *ngIf="p.stock == 0"
-                    class="ps-tag--out-stock"> Out stock</strong>
+                    class="ps-tag--out-stock"> Sin stock</strong>
 
                 </p>
 
@@ -112,36 +112,104 @@
 
             </div>
 
-            <div class="ps-product__variations">
-            
-                <div [innerHTML]="p.specification"></div>
-               
+            <div class="ps-product__variations" [attr.specification]="p.specification">
+
+               <!--  <figure>
+                    
+                    <figcaption>Color: <strong>Choose an option</strong></figcaption>
+
+                    <div class="d-flex">
+                        
+                        <div
+                        class="rounded-circle mr-3 border"
+                        data-toggle="tooltip" title="Black"
+                        style="background-color:black; width:30px; height:30px; cursor:pointer"></div>
+
+                        <div
+                        class="rounded-circle mr-3 border"
+                        data-toggle="tooltip" title="White"
+                        style="background-color:white; width:30px; height:30px; cursor:pointer"></div>
+
+                        <div
+                        class="rounded-circle mr-3 border"
+                        data-toggle="tooltip" title="Blue"
+                        style="background-color:blue; width:30px; height:30px; cursor:pointer"></div>
+
+                    </div>
+
+                </figure>
+
+                 <figure>
+                    
+                    <figcaption>Size: <strong>Choose an option</strong></figcaption>
+
+                    <div class="d-flex">
+                        
+                        <div
+                        class="py-2 px-3 mr-3 border"
+                        data-toggle="tooltip" title="S"
+                        style="cursor:pointer">S</div>
+
+                        <div
+                        class="py-2 px-3 mr-3 border"
+                        data-toggle="tooltip" title="M"
+                        style="cursor:pointer">M</div>
+
+                        <div
+                        class="py-2 px-3 mr-3 border"
+                        data-toggle="tooltip" title="L"
+                        style="cursor:pointer">L</div>
+
+                    </div>
+
+                </figure>
+
+                <figure>
+                    
+                    <figcaption>Model: <strong>Choose an option</strong></figcaption>
+
+                    <div class="d-flex">
+                        
+                        <div
+                        class="py-2 px-3 mr-3 border"
+                        data-toggle="tooltip" title="1st generation"
+                        style="cursor:pointer">1st generation</div>
+
+                        <div
+                        class="py-2 px-3 mr-3 border"
+                        data-toggle="tooltip" title="2nd generation"
+                        style="cursor:pointer">2nd generation</div>
+
+                    </div>
+
+                </figure> -->
+             
             </div>
 
             <div 
-            *ngIf="p.offer != ''"
+            *ngIf="p.offer != '' && offer"
             class="ps-product__countdown">
 
                 <figure>
 
-                    <figcaption> Don't Miss Out! This promotion will expires in</figcaption>
+                    <figcaption> No te lo pierdas, esta oferta termina en</figcaption>
 
                     <ul class="ps-countdown" [attr.data-time]="countd[i]">
 
                         <li><span class="days"></span>
-                            <p>Days</p>
+                            <p>Días</p>
                         </li>
 
                         <li><span class="hours"></span>
-                            <p>Hours</p>
+                            <p>Horas</p>
                         </li>
 
                         <li><span class="minutes"></span>
-                            <p>Minutes</p>
+                            <p>Minutos</p>
                         </li>
 
                         <li><span class="seconds"></span>
-                            <p>Seconds</p>
+                            <p>Segundos</p>
                         </li>
 
                     </ul>
@@ -150,13 +218,13 @@
 
                 <figure>
 
-                    <figcaption>Sold Items</figcaption>
+                    <figcaption>Productos vendidos</figcaption>
 
                     <div class="ps-product__progress-bar ps-progress" [attr.data-value]="p.stock">
 
                         <div class="ps-progress__value"><span></span></div>
 
-                        <p><b>{{100-p.stock}}/100</b> Sold</p>
+                        <p><b>{{100-p.stock}}/100</b> Vendidos</p>
 
                     </div>
 
@@ -168,31 +236,31 @@
 
                 <figure>
 
-                    <figcaption>Quantity</figcaption>
+                    <figcaption>Cantidad</figcaption>
 
                     <div class="form-group--number quantity">
 
-                        <button class="up">
+                        <button class="up" (click)="changeQuantity(quantity.value, 1, 'up')">
                         	<i class="fa fa-plus"></i>
                         </button>
 
-                        <button class="down">
+                        <button class="down" (click)="changeQuantity(quantity.value, 1, 'down')">
                         	<i class="fa fa-minus"></i>
                         </button>
 
-                        <input class="form-control px-5" type="number" value="1" min="1" max="9" step="1">
+                        <input class="form-control px-5" type="number" value="1" min="1" max="9" step="1" #quantity (change)="changeQuantity(quantity.value, 0, null)">
 
                     </div>
 
                 </figure>
 
-                <a class="ps-btn ps-btn--black" href="#">Add to cart</a>
+                <a class="ps-btn ps-btn--black" style="cursor:pointer" (click)="addShoppingCart(p.url, 1, [])">Añadir a la cesta</a>
 
-                <a class="ps-btn" href="#">Buy Now</a>
+                <a class="ps-btn" style="cursor:pointer" (click)="buyNow(p.url, 1, [])">Comprar ahora</a>
 
                 <div class="ps-product__actions">
 
-                	<a href="#">
+                	<a style="cursor:pointer" (click)="addWishlist(p.url)">
                 		<i class="icon-heart"></i>
                 	</a>
 
@@ -202,7 +270,7 @@
 
             <div class="ps-product__specification">
 
-            	<a class="report" href="#">Report Abuse</a> 
+            	<a class="report" href="#">Reportar abuso</a> 
 
                 <p class="categories">
 
@@ -265,11 +333,11 @@
 
         <ul class="ps-tab-list">
 
-            <li class="active"><a href="#tab-1">Description</a></li>
-            <li><a href="#tab-2">Specification</a></li>
-            <li><a href="#tab-3">Vendor</a></li>
+            <li class="active"><a href="#tab-1">Descripción</a></li>
+            <li><a href="#tab-2">Especificaciones</a></li>
+            <li><a href="#tab-3">Vendedor</a></li>
             <li><a href="#tab-4">Reviews ({{totalReviews}})</a></li>
-            <li><a href="#tab-5">Questions and Answers</a></li>
+            <li><a href="#tab-5">Preguntas y Respuestas</a></li>
 
         </ul>
 
@@ -323,11 +391,11 @@
 
                 <div class="ps-block--questions-answers">
 
-                    <h3>Questions and Answers</h3>
+                    <h3>Preguntas y Respuestas</h3>
 
                     <div class="form-group">
 
-                        <input class="form-control" type="text" placeholder="Have a question? Search for answer?">
+                        <input class="form-control" type="text" placeholder="Alguna pregunta?">
                     
                     </div>
 
@@ -342,5 +410,17 @@
     </div><!--  End product content -->
 
 </div>
+
+<!--=====================================
+Preload
+======================================-->
+<div
+*ngIf="preload"
+class="d-flex justify-content-center">
+    
+    <div class="spinner-border text-muted my-5"></div>
+
+</div>
+
 
 

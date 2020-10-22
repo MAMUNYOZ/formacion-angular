@@ -7,13 +7,23 @@ import { Api } from '../config';
 })
 export class SalesService {
 
-	private api:String = Api.url;
+	private api:string = Api.url;
 
   	constructor(private http:HttpClient) { }
 
 	getData(){
 
 		return this.http.get(`${this.api}sales.json`);
+
+	}
+
+	/*=============================================
+	Registro en Firebase Database
+	=============================================*/
+
+	registerDatabase(body:object, idToken:string){
+
+		return this.http.post(`${this.api}/sales.json?auth=${idToken}`, body);
 
 	}
 }

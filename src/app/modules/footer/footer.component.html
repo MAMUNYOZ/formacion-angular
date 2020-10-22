@@ -1,164 +1,139 @@
 <!--=====================================
 	Footer
-	======================================-->  
+	======================================-->
 
-    <footer class="ps-footer">
+<footer class="ps-footer">
+  <div class="container">
+    <div class="ps-footer__widgets">
+      <!--=====================================
+				Contacta
+				======================================-->
 
-        <div class="container">
+      <aside class="widget widget_footer widget_contact-us">
+        <h4 class="widget-title">Contacta</h4>
 
-            <div class="ps-footer__widgets">
+        <div class="widget_content">
+          <p>Llámanos 24/7</p>
+          <h3>916 61 61 69</h3>
+          <p>
+            C/ Almendros 345, Madrid <br />
+            <a href="mailto:contact@shopconcept">contact@shopconcept</a>
+          </p>
 
-            	<!--=====================================
-				Contact us
-				======================================-->  
-
-                <aside class="widget widget_footer widget_contact-us">
-
-                    <h4 class="widget-title">Contact us</h4>
-
-                    <div class="widget_content">
-
-                        <p>Call us 24/7</p>
-                        <h3>1800 97 97 69</h3>
-                        <p>502 New Design Str, Melbourne, Australia <br>
-                        	<a href="mailto:contact@marketplace.co">contact@marketplace.co</a>
-                    	</p>
-
-                        <ul class="ps-list--social">
-                            <li><a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a></li>
-                            <li><a class="twitter" href="#"><i class="fab fa-twitter"></i></a></li>
-                            <li><a class="google-plus" href="#"><i class="fab fa-youtube"></i></a></li>
-                            <li><a class="instagram" href="#"><i class="fab fa-instagram"></i></a></li>
-                        </ul>
-
-                    </div>
-
-                </aside>
-
-                <!--=====================================
-				Quick Links
-				======================================-->  
-
-                <aside class="widget widget_footer">
-
-                    <h4 class="widget-title">Quick links</h4>
-
-                    <ul class="ps-list--link">
-
-                        <li><a href="#">Policy</a></li>
-
-                        <li><a href="#">Term &amp; Condition</a></li>
-
-                        <li><a href="#">Shipping</a></li>
-
-                        <li><a href="#">Return</a></li>
-
-                        <li><a href="faqs.html">FAQs</a></li>
-
-                    </ul>
-
-                </aside>
-
-                <!--=====================================
-				Company
-				======================================-->  
-
-                <aside class="widget widget_footer">
-
-                    <h4 class="widget-title">Company</h4>
-
-                    <ul class="ps-list--link">
-
-                        <li><a href="about-us.html">About Us</a></li>
-
-                        <li><a href="#">Affilate</a></li>
-
-                        <li><a href="#">Career</a></li>
-
-                        <li><a href="contact-us.html">Contact</a></li>
-
-                    </ul>
-
-                </aside>
-
-                <!--=====================================
-				Bussiness
-				======================================-->  
-
-                <aside class="widget widget_footer">
-
-                    <h4 class="widget-title">Bussiness</h4>
-
-                    <ul class="ps-list--link">
-
-                        <li><a href="#">Our Press</a></li>
-
-                        <li><a href="checkout.html">Checkout</a></li>
-
-                        <li><a href="my-account.html">My account</a></li>
-
-                        <li><a href="shop-default.html">Shop</a></li>
-
-                    </ul>
-
-                </aside>
-
-            </div>
-
-          	<!--=====================================
-			Categories Footer
-			======================================-->  
-
-            <div class="ps-footer__links">
-
-                <p
-                *ngFor="let category of categories; let lastIndex = last"
-                >
-                	<strong [attr.category-footer]="category.name">{{category.name}}</strong>
-
-                {{ lastIndex ? callback() : ""}}
-                	
-                </p>  
-
-
-
-            </div>
-
-            <!--=====================================
-			CopyRight - Payment method Footer
-			======================================-->  
-
-            <div class="ps-footer__copyright">
-
-                <p>© 2020 MarketPlace. All Rights Reserved</p>
-
-                <p>
-                	<span>We Using Safe Payment For:</span>
-
-                	<a href="#">
-                		<img src="{{path}}img/payment-method/1.jpg" alt="">
-                	</a>
-
-                	<a href="#">
-                		<img src="{{path}}img/payment-method/2.jpg" alt="">
-                	</a>
-
-                	<a href="#">
-                		<img src="{{path}}img/payment-method/3.jpg" alt="">
-                	</a>
-
-                	<a href="#">
-                		<img src="{{path}}img/payment-method/4.jpg" alt="">
-                	</a>
-
-                	<a href="#">
-                		<img src="{{path}}img/payment-method/5.jpg" alt="">
-                	</a>
-
-                </p>
-
-            </div>
-
+          <ul class="ps-list--social">
+            <li>
+              <a class="facebook" href="#"><i class="fab fa-facebook-f"></i></a>
+            </li>
+            <li>
+              <a class="twitter" href="#"><i class="fab fa-twitter"></i></a>
+            </li>
+            <li>
+              <a class="google-plus" href="#"><i class="fab fa-youtube"></i></a>
+            </li>
+            <li>
+              <a class="instagram" href="#"><i class="fab fa-instagram"></i></a>
+            </li>
+          </ul>
         </div>
+      </aside>
 
-    </footer>
+      <!--=====================================
+				Accesos rápidos
+				======================================-->
+
+      <aside class="widget widget_footer">
+        <h4 class="widget-title">Accesos Rápidos</h4>
+
+        <ul class="ps-list--link">
+          <li><a href="#">Políticas</a></li>
+
+          <li><a href="#">Términos y condiciones</a></li>
+
+          <li><a href="#">Envíos</a></li>
+
+          <li><a href="#">Devoluciones</a></li>
+
+          <li><a href="#">FAQs</a></li>
+        </ul>
+      </aside>
+
+      <!--=====================================
+				Nosotros
+				======================================-->
+
+      <aside class="widget widget_footer">
+        <h4 class="widget-title">Nosotros</h4>
+
+        <ul class="ps-list--link">
+          <li><a href="#">Sobre Nosotros</a></li>
+
+          <li><a href="#">Afiliados</a></li>
+
+          <li><a href="#">Contacta</a></li>
+        </ul>
+      </aside>
+
+      <!--=====================================
+				En los medios
+				======================================-->
+
+      <aside class="widget widget_footer">
+        <h4 class="widget-title">En los medios</h4>
+
+        <ul class="ps-list--link">
+          <li><a href="#">Noticias</a></li>
+
+          <li><a href="#">Blog</a></li>
+
+          <li><a href="#">Consejos</a></li>
+        </ul>
+      </aside>
+    </div>
+
+    <!--=====================================
+			Menú categorías
+			======================================-->
+
+    <div class="ps-footer__links">
+      <p *ngFor="let category of categories; let lastIndex = last">
+        <strong [attr.category-footer]="category.name">{{
+          category.name
+        }}</strong>
+
+        {{ lastIndex ? callback() : "" }}
+      </p>
+    </div>
+
+    <!--=====================================
+			CopyRight - Métodos de pago
+			======================================-->
+
+    <div class="ps-footer__copyright">
+      <p>© 2020 ShopConcept. Todos los derechos reservados</p>
+
+      <p>
+        <span>Nuestros métodos de pago:</span>
+
+        <a href="#">
+          <img src="{{ path }}img/payment-method/1.jpg" alt="pago1" />
+        </a>
+
+        <a href="#">
+          <img src="{{ path }}img/payment-method/2.jpg" alt="pago2" />
+        </a>
+
+        <a href="#">
+          <img src="{{ path }}img/payment-method/3.jpg" alt="pago3" />
+        </a>
+
+        <a href="#">
+          <img src="{{ path }}img/payment-method/4.jpg" alt="pago4" />
+        </a>
+
+        <a href="#">
+          <img src="{{ path }}img/payment-method/5.jpg" alt="pago5" />
+        </a>
+      </p>
+    </div>
+  </div>
+</footer>

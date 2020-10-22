@@ -7,17 +7,17 @@ import { Api } from '../config';
 })
 export class SubCategoriesService {
 
-  	private api:String = Api.url;
+  	private api:string = Api.url;
 
   	constructor(private http:HttpClient) { }
 
-  	getFilterData(orderBy:String, equalTo:String){
+  	getFilterData(orderBy:string, equalTo:string){
 
 		return this.http.get(`${this.api}sub-categories.json?orderBy="${orderBy}"&equalTo="${equalTo}"&print=pretty`);
 
 	}
 
-	patchData(id:String, value:Object){
+	patchData(id:string, value:object){
 
 		return this.http.patch(`${this.api}sub-categories/${id}.json`,value);
 

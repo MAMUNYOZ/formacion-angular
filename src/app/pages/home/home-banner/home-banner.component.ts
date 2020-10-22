@@ -11,12 +11,12 @@ import { ProductsService } from '../../../services/products.service';
 })
 export class HomeBannerComponent implements OnInit {
 
-	path:String = Path.url;	
-	banner_home:Array<any> = [];
-	category:Array<any> = [];
-	url:Array<any> = [];
-	render:Boolean = true;
-	preload:Boolean = false;
+	path:string = Path.url;	
+	banner_home:any[] = [];
+	category:any[] = [];
+	url:any[] = [];
+	render:boolean = true;
+	preload:boolean = false;
 
 	constructor(private productsService: ProductsService) { }
 

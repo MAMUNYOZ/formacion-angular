@@ -1,0 +1,191 @@
+<!--=====================================
+Profile
+======================================-->
+
+<aside *ngIf="!preload" class="ps-block--store-banner">
+  <div class="ps-block__user">
+    <div class="ps-block__user-avatar">
+      <img src="{{ picture }}" />
+
+      <div class="br-wrapper">
+        <button
+          class="btn btn-primary btn-lg rounded-circle"
+          data-target="#newPicture"
+          data-toggle="modal"
+        >
+          <i class="fas fa-pencil-alt"></i>
+        </button>
+      </div>
+
+      <div *ngIf="vendor" class="br-wrapper br-theme-fontawesome-stars mt-3">
+        <select class="ps-rating" data-read-only="true" style="display: none">
+          <option value="1">1</option>
+          <option value="1">2</option>
+          <option value="1">3</option>
+          <option value="1">4</option>
+          <option value="2">5</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="ps-block__user-content text-center text-lg-left">
+      <h2 class="text-white">{{ displayName }}</h2>
+
+      <p><i class="fas fa-user"></i> {{ username }}</p>
+
+      <p><i class="fas fa-envelope"></i> {{ email }}</p>
+
+      <button
+        class="btn btn-warning btn-lg"
+        data-target="#newPassword"
+        data-toggle="modal"
+      >
+        Cambiar Clave
+      </button>
+    </div>
+    
+  </div>
+</aside>
+<!-- s -->
+
+<!--=====================================
+Preload
+======================================-->
+<div *ngIf="preload" class="d-flex justify-content-center">
+  <div class="spinner-border text-muted my-5"></div>
+</div>
+
+<!--=====================================
+Wishlist
+======================================-->
+
+<app-account-wishlist
+  *ngIf="!preload && accountUrl == undefined"
+  [childItem]="id"
+></app-account-wishlist>
+
+<!--=====================================
+My Shopping
+======================================-->
+
+<app-account-my-shopping
+  *ngIf="!preload && accountUrl == 'my-shopping'"
+  [childItem]="username"
+></app-account-my-shopping>
+
+<!--=====================================
+MODAL PARA ESCRIBIR LA NUEVA CONTRASEÑA
+======================================-->
+
+<div class="modal" id="newPassword">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Nueva Clave</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form class="ps-form--account ps-tab-root needs-validation" novalidate>
+          <div class="form-group">
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Introduce tu nueva clave"
+              name="password"
+              #password
+              minlength="4"
+              pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}"
+              data-toggle="tooltip"
+              title="Introce la clave con al menos 4 caracteres e incluye mayúsculas, minúsculas y números"
+              (change)="validate(password)"
+              required
+            />
+
+            <div class="valid-feedback">Valid.</div>
+            <div class="invalid-feedback">
+              Por favor, rellene este campo correctamente.
+            </div>
+          </div>
+
+          <div class="form-group submtit">
+            <button
+              type="button"
+              (click)="newPassword(password.value)"
+              class="ps-btn ps-btn--fullwidth"
+            >
+              Enviar
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--=====================================
+MODAL PARA CAMBIAR LA FOTO
+======================================-->
+
+<div class="modal" id="newPicture">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Nueva Imagen</h4>
+        <button type="button" class="close" data-dismiss="modal">
+          &times;
+        </button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form class="ps-form--account ps-tab-root">
+          <div class="custom-file">
+            <input
+              type="file"
+              class="custom-file-input"
+              id="customFile"
+              accept="image/*"
+              maxSize="2000000"
+              (change)="validateImage($event)"
+            />
+
+            <label class="custom-file-label" for="customFile"
+              >Elija imagen</label
+            >
+          </div>
+
+          <figure class="text-center py-3">
+            <img
+              src="{{ picture }}"
+              class="img-fluid rounded-circle changePicture"
+              style="width: 150px"
+            />
+          </figure>
+
+          <div class="form-group submtit">
+            <button
+              type="button"
+              (click)="uploadImage()"
+              class="ps-btn ps-btn--fullwidth"
+            >
+              Enviar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,14 +22,14 @@ declare var $: any;
   styleUrls: ['./home-hot-today.component.css'],
 })
 export class HomeHotTodayComponent implements OnInit {
-  path: String = Path.url;
-  indexes: Array<any> = [];
-  products: Array<any> = [];
-  render: Boolean = true;
-  cargando: Boolean = false;
-  topSales: Array<any> = [];
-  topSalesBlock: Array<any> = [];
-  renderBestSeller: Boolean = true;
+  path: string = Path.url;
+  indexes: any[] = [];
+  products: any[] = [];
+  render: boolean = true;
+  cargando: boolean = false;
+  topSales: any[] = [];
+  topSalesBlock: any[] = [];
+  renderBestSeller: boolean = true;
 
   constructor(
     private productsService: ProductsService,
@@ -58,9 +58,9 @@ export class HomeHotTodayComponent implements OnInit {
         getProducts.push({
           offer: JSON.parse(resp[i].offer),
           stock: resp[i].stock,
-		});
-		this.products.push(resp[i]);
-		
+        });
+
+        this.products.push(resp[i]);
       }
 
       /*=============================================
@@ -413,23 +413,36 @@ export class HomeHotTodayComponent implements OnInit {
             let type;
             let value;
             let offer;
+            let offerDate;
+            let today = new Date();
 
             if (top20Array[i][f].offer != '') {
-              type = JSON.parse(top20Array[i][f].offer)[0];
-              value = JSON.parse(top20Array[i][f].offer)[1];
+              offerDate = new Date(
+                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[0]),
+                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[1]) -
+                  1,
+                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[2])
+              );
 
-              if (type == 'Disccount') {
-                offer = (
-                  top20Array[i][f].price -
-                  (top20Array[i][f].price * value) / 100
-                ).toFixed(2);
+              if (today < offerDate) {
+                type = JSON.parse(top20Array[i][f].offer)[0];
+                value = JSON.parse(top20Array[i][f].offer)[1];
+
+                if (type == 'Disccount') {
+                  offer = (
+                    top20Array[i][f].price -
+                    (top20Array[i][f].price * value) / 100
+                  ).toFixed(2);
+                }
+
+                if (type == 'Fixed') {
+                  offer = value;
+                }
+
+                price = `<p class="ps-product__price sale">$${offer} <del>$${top20Array[i][f].price} </del></p>`;
+              } else {
+                price = `<p class="ps-product__price">$${top20Array[i][f].price} </p>`;
               }
-
-              if (type == 'Fixed') {
-                offer = value;
-              }
-
-              price = `<p class="ps-product__price sale">$${offer} <del>$${top20Array[i][f].price} </del></p>`;
             } else {
               price = `<p class="ps-product__price">$${top20Array[i][f].price} </p>`;
             }

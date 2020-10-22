@@ -16,10 +16,10 @@ import { ProductsService } from '../../../services/products.service';
 })
 export class HomeShowcaseComponent implements OnInit {
 
-	path:String = Path.url;	
-	categories:Array<any> = [];
-	cargando:Boolean = false;
-	render:Boolean = true;
+	path:string = Path.url;	
+	categories:any[] = [];
+	cargando:boolean = false;
+	render:boolean = true;
 
    	constructor(private categoriesService: CategoriesService,
    		        private subCategoriesService: SubCategoriesService,

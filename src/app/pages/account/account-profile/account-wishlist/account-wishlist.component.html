@@ -1,0 +1,113 @@
+<!--=====================================
+Nav Account
+======================================-->
+
+<div class="ps-section__content">
+  <ul class="ps-section__links">
+    <li class="active"><a routerLink="/account">Mis Favoritos</a></li>
+    <li><a routerLink="/account/my-shopping">Mis Compras</a></li>
+  </ul>
+
+  <!--=====================================
+    Wishlist
+    ======================================-->
+
+  <div class="table-responsive">
+    <table
+      class="table ps-table--whishlist dt-responsive"
+      datatable
+      [dtOptions]="dtOptions"
+      [dtTrigger]="dtTrigger"
+    >
+      <thead>
+        <tr>
+          <th>Producto</th>
+
+          <th>Precio/Unidad</th>
+
+          <th>Stock</th>
+
+          <th></th>
+
+          <th></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngIf="products.length == 0">
+          <td colspan="3" class="text-center">No hay ningún producto.</td>
+        </tr>
+
+        <!-- Product -->
+
+        <tr
+          *ngFor="let product of products; let i = index; let lastIndex = last"
+        >
+          <td>
+            <div class="ps-product--cart">
+              <div class="ps-product__thumbnail">
+                <a href="product/{{ product.url }}">
+                  <img
+                    src="{{ path }}img/products/{{ product.category }}/{{
+                      product.image
+                    }}"
+                    alt="{{ product.name }}"
+                  />
+                </a>
+              </div>
+
+              <div class="ps-product__content">
+                <a href="product/{{ product.url }}">
+                  {{ product.name }}
+                </a>
+              </div>
+            </div>
+          </td>
+
+          <td class="ps-product">
+            <div [innerHTML]="price[i][0]"></div>
+          </td>
+
+          <td>
+            <span *ngIf="product.stock == 0" class="ps-tag ps-tag--out-stock"
+              >Sin stock</span
+            >
+
+            <span *ngIf="product.stock > 0" class="ps-tag ps-tag--in-stock"
+              >En stock</span
+            >
+          </td>
+
+          <td>
+            <a
+              *ngIf="product.stock > 0"
+              class="ps-btn"
+              style="cursor: pointer"
+              (click)="addShoppingCart(product.url, 1, [])"
+            >
+              Añadir a la cesta
+            </a>
+          </td>
+
+          <td>
+            <a
+              mwlConfirmationPopover
+              [popoverMessage]="popoverMessage"
+              placement="left"
+              class="removeProduct"
+              style="cursor: pointer"
+              (confirm)="removeProduct(product.url)"
+              [attr.remove]="product.url"
+            >
+              <i class="icon-cross"></i>
+            </a>
+          </td>
+
+          {{
+            lastIndex ? callback() : ""
+          }}
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

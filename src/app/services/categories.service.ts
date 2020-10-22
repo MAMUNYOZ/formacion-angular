@@ -7,7 +7,7 @@ import { Api } from '../config';
 })
 export class CategoriesService {
 
-	private api:String = Api.url;
+	private api:string = Api.url;
 
   	constructor(private http:HttpClient) { }
 
@@ -17,13 +17,13 @@ export class CategoriesService {
 
 	}
 
-	getFilterData(orderBy:String, equalTo:String){
+	getFilterData(orderBy:string, equalTo:string){
 
 		return this.http.get(`${this.api}categories.json?orderBy="${orderBy}"&equalTo="${equalTo}"&print=pretty`);
 
 	}
 
-	patchData(id:String, value:Object){
+	patchData(id:string, value:object){
 
 		return this.http.patch(`${this.api}categories/${id}.json`,value);
 

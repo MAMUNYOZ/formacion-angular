@@ -9,8 +9,9 @@ import { Rating,
 	     Tabs } from '../../../functions';
 
 import { ProductsService} from '../../../services/products.service';
+import { UsersService } from '../../../services/users.service';
 
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 declare var jQuery:any;
 declare var $:any;
@@ -22,24 +23,26 @@ declare var $:any;
 })
 export class ProductsShowcaseComponent implements OnInit {
 
-  	path:String = Path.url;
-  	products:Array<any> = [];
-  	render:Boolean = true;
-  	cargando:Boolean = false;
-  	rating:Array<any> = [];
-	reviews:Array<any> = [];
-	price:Array<any> = [];
-	params:String = null;
+  	path:string = Path.url;
+  	products:any[] = [];
+  	render:boolean = true;
+  	cargando:boolean = false;
+  	rating:any[] = [];
+	reviews:any[] = [];
+	price:any[] = [];
+	params:string = null;
 	page;
-	productFound:Number = 0;
-	currentRoute:String = null;
-	totalPage:Number = 0;
+	productFound:number = 0;
+	currentRoute:string = null;
+	totalPage:number = 0;
 	sort;
-	sortItems:Array<any> = [];
-	sortValues:Array<any> = [];
+	sortItems:any[] = [];
+	sortValues:any[] = [];
 
   	constructor(private productsService: ProductsService,
-  		        private activateRoute: ActivatedRoute) { }
+  		        private activateRoute: ActivatedRoute,
+  		        private usersService: UsersService,
+  		        private router:Router) { }
 
  	ngOnInit(): void {
 
@@ -141,7 +144,7 @@ export class ProductsShowcaseComponent implements OnInit {
 		/*=============================================
 		Ordenamos el arreglo de objetos lo mas actual a lo más antiguo
 		=============================================*/
-		if(this.sort == undefined || this.sort == "fisrt"){
+		if(this.sort == undefined || this.sort == "first"){
 
 			getProducts.sort(function (a, b) {
 			    return (b.date_created - a.date_created)
@@ -364,5 +367,34 @@ export class ProductsShowcaseComponent implements OnInit {
 			})
   		}
   	}
+
+  	/*=============================================
+	Función para agregar productos a la lista de deseos	
+	=============================================*/
+
+	addWishlist(product){		  
+		this.usersService.addWishlist(product);
+	}
+
+
+	/*=============================================
+	Función para agregar productos al carrito de compras
+	=============================================*/
+
+	addShoppingCart(product, unit, details){
+
+		let url = this.router.url;
+
+		let item = {
+		
+			product: product,
+			unit: unit,
+			details: details,
+			url:url
+		}
+
+		this.usersService.addSoppingCart(item);
+
+	}
 
 }

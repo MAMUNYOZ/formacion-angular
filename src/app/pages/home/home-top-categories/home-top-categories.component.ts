@@ -10,9 +10,9 @@ import { CategoriesService } from '../../../services/categories.service';
 })
 export class HomeTopCategoriesComponent implements OnInit {
 
-	path:String = Path.url;	
-	categories:Array<any> = [];
-	cargando:Boolean = false;
+	path:string = Path.url;	
+	categories:any[] = [];
+	cargando:boolean = false;
 
 	constructor(private categoriesService: CategoriesService) { }
 

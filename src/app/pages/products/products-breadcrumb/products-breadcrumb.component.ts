@@ -12,7 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ProductsBreadcrumbComponent implements OnInit {
 
-	breadcrumb:String = null;
+	breadcrumb:string = null;
 
   	constructor(private categoriesService: CategoriesService,
   	          private subCategoriesService: SubCategoriesService,

@@ -10,13 +10,13 @@ Products found
 
     <div class="ps-shopping__header">
 
-        <p><strong> {{productFound}}</strong> Products found</p>
+        <p><strong> {{productFound}}</strong> Artículos encontrados</p>
 
         <div class="ps-shopping__actions">
 
             <select 
             *ngIf="sortItems.length > 0"
-            class="ps-select sortItems" data-placeholder="Sort Items">
+            class="ps-select sortItems" data-placeholder="Ordenar artículos">
 
                 <option
                 *ngFor="let item of sortItems; let i = index"
@@ -29,7 +29,7 @@ Products found
 
             <div class="ps-shopping__view">
 
-                <p>View</p>
+                <p>Vistas</p>
 
                 <ul class="ps-tab-list">
 
@@ -92,19 +92,19 @@ Products found
                                 <ul class="ps-product__actions">
 
                                     <li>
-                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Add to Cart">
+                                        <a style="cursor:pointer" (click)="addShoppingCart(product.url, 1, [])" data-toggle="tooltip" data-placement="top" title="Añadir a la cesta">
                                             <i class="icon-bag2"></i>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="product/{{product.url}}" data-toggle="tooltip" data-placement="top" title="Quick View">
+                                        <a href="product/{{product.url}}" data-toggle="tooltip" data-placement="top" title="Vista rápida">
                                             <i class="icon-eye"></i>
                                         </a>
                                     </li>
 
                                     <li>
-                                        <a href="#" data-toggle="tooltip" data-placement="top" title="Add to Whishlist">
+                                        <a style="cursor:pointer" (click)="addWishlist(product.url)" data-toggle="tooltip" data-placement="top" title="Añadir a favoritos">
                                             <i class="icon-heart"></i>
                                         </a>
                                     </li>                      
@@ -219,7 +219,7 @@ Products found
 
                             </div>
 
-                            <p class="ps-product__vendor">Sold by:
+                            <p class="ps-product__vendor">Vendido por:
                                 <a href="#">{{product.store}}</a>
                             </p>
 
@@ -231,11 +231,11 @@ Products found
 
                             <div [innerHTML]="price[i][0]"></div>
 
-                            <a class="ps-btn" href="#">Add to cart</a>
+                            <a class="ps-btn" href="#">Añadir a la cesta</a>
 
                             <ul class="ps-product__actions">
-                                <li><a href="product/{{product.url}}"><i class="icon-eye"></i>View</a></li>
-                                <li><a href="#"><i class="icon-heart"></i> Wishlist</a></li>       
+                                <li><a href="product/{{product.url}}"><i class="icon-eye"></i>Vistas</a></li>
+                                <li><a href="#"><i class="icon-heart"></i> Favoritos</a></li>       
                             </ul>
 
                         </div>

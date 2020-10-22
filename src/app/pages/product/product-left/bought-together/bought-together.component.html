@@ -1,6 +1,6 @@
 <div class="ps-block--bought-toggether">
 
-    <h4>Frequently Bought Together</h4>
+    <h4>Compras frecuentes</h4>
 
     <div class="ps-block__content">
 
@@ -42,8 +42,14 @@
 
                 <p>Total Price:<strong></strong></p>
 
-                <a class="ps-btn" href="#">Add All to cart</a>
-                <a class="ps-btn ps-btn--gray ps-btn--outline" href="#">Add All to whishlist</a>
+                <a class="ps-btn" 
+                   style="cursor:pointer" 
+                   (click)="addShoppingCart(products[0].url, 1, [], products[1].url, 1, [])">Añadir cesta</a>
+                <a class="ps-btn ps-btn--gray ps-btn--outline" 
+                   style="cursor: pointer" 
+                   (click)="addWishlist(products[0].url, products[1].url)">
+
+               Añadir favoritos</a>
 
             </div>
 

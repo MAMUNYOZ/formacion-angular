@@ -7,7 +7,7 @@ import { Api } from '../config';
 })
 export class StoresService {
 
-  	private api:String = Api.url;
+  	private api:string = Api.url;
 
   	constructor(private http:HttpClient) { }
 
@@ -17,7 +17,7 @@ export class StoresService {
 
 	}
 
-	getFilterData(orderBy:String, equalTo:String){
+	getFilterData(orderBy:string, equalTo:string){
 
 		return this.http.get(`${this.api}stores.json?orderBy="${orderBy}"&equalTo="${equalTo}"&print=pretty`);
 
