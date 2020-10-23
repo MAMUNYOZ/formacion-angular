@@ -20,7 +20,6 @@ export class HeaderPromotionComponent implements OnInit {
     this.preload = true;
 
     this.productsService.getData().subscribe((resp) => {
-
       /*=============================================
 			Mostramos un banner aleatorio de entre 20 productos
 			=============================================*/
