@@ -25,11 +25,11 @@ export class HomeHotTodayComponent implements OnInit {
   path: string = Path.url;
   indexes: any[] = [];
   products: any[] = [];
-  render: boolean = true;
-  cargando: boolean = false;
+  render = true;
+  cargando = false;
   topSales: any[] = [];
   topSalesBlock: any[] = [];
-  renderBestSeller: boolean = true;
+  renderBestSeller = true;
 
   constructor(
     private productsService: ProductsService,
@@ -39,12 +39,12 @@ export class HomeHotTodayComponent implements OnInit {
   ngOnInit(): void {
     this.cargando = true;
 
-    let getProducts = [];
-    let hoy = new Date();
+    const getProducts = [];
+    const hoy = new Date();
     let fechaOferta = null;
 
     /*=============================================
-		Tomamos la data de los productos
+		Obtenemos la data de los productos
 		=============================================*/
 
     this.productsService.getData().subscribe((resp) => {
@@ -52,71 +52,73 @@ export class HomeHotTodayComponent implements OnInit {
 			Recorremos cada producto para separar las ofertas y el stock
 			=============================================*/
 
-      let i;
+      for (const i in resp) {
+        if (resp.hasOwnProperty(i)) {
+          getProducts.push({
+            offer: JSON.parse(resp[i].offer),
+            stock: resp[i].stock,
+          });
 
-      for (i in resp) {
-        getProducts.push({
-          offer: JSON.parse(resp[i].offer),
-          stock: resp[i].stock,
-        });
-
-        this.products.push(resp[i]);
+          this.products.push(resp[i]);
+        }
       }
 
       /*=============================================
 			Recorremos cada oferta y stock para clasificar las ofertas actuales y los productos que si tengan stock
 			=============================================*/
 
-      for (i in getProducts) {
-        fechaOferta = new Date(
-          parseInt(getProducts[i]['offer'][2].split('-')[0]),
-          parseInt(getProducts[i]['offer'][2].split('-')[1]) - 1,
-          parseInt(getProducts[i]['offer'][2].split('-')[2])
-        );
+      for (const i in getProducts) {
+        if (getProducts.hasOwnProperty(i)) {
+          fechaOferta = new Date(
+            parseInt(getProducts[i]['offer'][2].split('-')[0], 10),
+            parseInt(getProducts[i]['offer'][2].split('-')[1], 10) - 1,
+            parseInt(getProducts[i]['offer'][2].split('-')[2], 10)
+          );
 
-        if (hoy < fechaOferta && getProducts[i]['stock'] > 0) {
-          this.indexes.push(i);
-          this.cargando = false;
+          if (hoy < fechaOferta && getProducts[i]['stock'] > 0) {
+            this.indexes.push(i);
+            this.cargando = false;
+          }
         }
       }
     });
 
     /*=============================================
-		Tomamos la data de las ventas
+		Obtenemos la data de las ventas
 		=============================================*/
 
-    let getSales = [];
+    const getSales = [];
 
     this.salesService.getData().subscribe((resp) => {
       /*=============================================
 			Recorremos cada venta para separar los productos y las cantidades
 			=============================================*/
 
-      let i;
-
-      for (i in resp) {
-        getSales.push({
-          product: resp[i].product,
-          quantity: resp[i].quantity,
-        });
+      for (const i in resp) {
+        if (resp.hasOwnProperty(i)) {
+          getSales.push({
+            product: resp[i].product,
+            quantity: resp[i].quantity,
+          });
+        }
       }
 
       /*=============================================
-			Ordenamos de mayor a menor el arreglo de objetos
+			Ordenamos de mayor a menor el array de objetos
 			=============================================*/
 
-      getSales.sort(function (a, b) {
+      getSales.sort((a, b) => {
         return b.quantity - a.quantity;
       });
 
       /*=============================================
-			Sacamos del arreglo los productos repetidos dejando los de mayor venta
+			Sacamos los productos repetidos dejando los de mayor venta
 			=============================================*/
 
-      let filterSales = [];
+      const filterSales = [];
 
       getSales.forEach((sale) => {
-        if (!filterSales.find((resp) => resp.product == sale.product)) {
+        if (!filterSales.find((resp2) => resp2.product == sale.product)) {
           const { product, quantity } = sale;
 
           filterSales.push({ product, quantity });
@@ -139,11 +141,11 @@ export class HomeHotTodayComponent implements OnInit {
 
           this.productsService
             .getFilterData('name', sale.product)
-            .subscribe((resp) => {
-              let i;
-
-              for (i in resp) {
-                this.topSales.push(resp[i]);
+            .subscribe((resp2) => {
+              for (const i in resp2) {
+                if (resp2.hasOwnProperty(i)) {
+                  this.topSales.push(resp2[i]);
+                }
               }
             });
         }
@@ -163,7 +165,7 @@ export class HomeHotTodayComponent implements OnInit {
 	Función que nos avisa cuando finaliza el renderizado de Angular
 	=============================================*/
 
-  callback() {
+  callback(): any {
     if (this.render) {
       this.render = false;
 
@@ -171,56 +173,56 @@ export class HomeHotTodayComponent implements OnInit {
 			Seleccionar del DOM los elementos de la galería mixta
 			=============================================*/
 
-      let galleryMix_1 = $('.galleryMix_1');
-      let galleryMix_2 = $('.galleryMix_2');
-      let galleryMix_3 = $('.galleryMix_3');
+      const galleryMix1 = $('.galleryMix_1');
+      const galleryMix2 = $('.galleryMix_2');
+      const galleryMix3 = $('.galleryMix_3');
 
       /*=============================================
 			Seleccionar del DOM los elementos de la oferta
 			=============================================*/
 
-      let offer_1 = $('.offer_1');
-      let offer_2 = $('.offer_2');
-      let offer_3 = $('.offer_3');
+      const offer1 = $('.offer_1');
+      const offer2 = $('.offer_2');
+      const offer3 = $('.offer_3');
 
       /*=============================================
 			Seleccionar del DOM los elementos de las reseñas
 			=============================================*/
 
-      let review_1 = $('.review_1');
-      let review_2 = $('.review_2');
-      let review_3 = $('.review_3');
+      const review1 = $('.review_1');
+      const review2 = $('.review_2');
+      const review3 = $('.review_3');
 
       /*=============================================
 			Recorremos todos los índices de productos
 			=============================================*/
 
-      for (let i = 0; i < galleryMix_1.length; i++) {
+      for (let i = 0; i < galleryMix1.length; i++) {
         /*=============================================
 				Recorremos todos las fotografías de la galería de cada producto
 				=============================================*/
 
         for (
           let f = 0;
-          f < JSON.parse($(galleryMix_1[i]).attr('gallery')).length;
+          f < JSON.parse($(galleryMix1[i]).attr('gallery')).length;
           f++
         ) {
           /*=============================================
 					Agregar imágenes grandes
 					=============================================*/
 
-          $(galleryMix_2[i]).append(
+          $(galleryMix2[i]).append(
             `<div class="item">
-	                    	<a href="assets/img/products/${$(galleryMix_1[i]).attr(
+	                    	<a href="assets/img/products/${$(galleryMix1[i]).attr(
                           'category'
                         )}/gallery/${
-              JSON.parse($(galleryMix_1[i]).attr('gallery'))[f]
+              JSON.parse($(galleryMix1[i]).attr('gallery'))[f]
             }">
-	                    		
-	                    		<img src="assets/img/products/${$(galleryMix_1[i]).attr(
+
+	                    		<img src="assets/img/products/${$(galleryMix1[i]).attr(
                             'category'
                           )}/gallery/${
-              JSON.parse($(galleryMix_1[i]).attr('gallery'))[f]
+              JSON.parse($(galleryMix1[i]).attr('gallery'))[f]
             }">
 	                    	</a>
 	                    </div>`
@@ -230,12 +232,12 @@ export class HomeHotTodayComponent implements OnInit {
 					Agregar imágenes pequeñas
 					=============================================*/
 
-          $(galleryMix_3[i]).append(
+          $(galleryMix3[i]).append(
             `<div class="item">
-	                    	<img src="assets/img/products/${$(galleryMix_1[i]).attr(
+	                    	<img src="assets/img/products/${$(galleryMix1[i]).attr(
                           'category'
                         )}/gallery/${
-              JSON.parse($(galleryMix_1[i]).attr('gallery'))[f]
+              JSON.parse($(galleryMix1[i]).attr('gallery'))[f]
             }">
 	                    </div>`
           );
@@ -245,24 +247,24 @@ export class HomeHotTodayComponent implements OnInit {
 				Capturamos el array de ofertas de cada producto
 				=============================================*/
 
-        let offer = JSON.parse($(offer_1[i]).attr('offer'));
+        const offer = JSON.parse($(offer1[i]).attr('offer'));
 
         /*=============================================
 				Capturamos el precio de cada producto
 				=============================================*/
 
-        let price = Number($(offer_1[i]).attr('price'));
+        const price = Number($(offer1[i]).attr('price'));
 
         /*=============================================
 				Preguntamos si es descuento
 				=============================================*/
 
-        if (offer[0] == 'Disccount') {
-          $(offer_1[i]).html(
+        if (offer[0] === 'Disccount') {
+          $(offer1[i]).html(
             `<span>Save <br> $${((price * offer[1]) / 100).toFixed(2)}</span>`
           );
 
-          $(offer_2[i]).html(
+          $(offer2[i]).html(
             `$${(price - (price * offer[1]) / 100).toFixed(2)}`
           );
         }
@@ -271,25 +273,25 @@ export class HomeHotTodayComponent implements OnInit {
 				Preguntamos si es precio fijo
 				=============================================*/
 
-        if (offer[0] == 'Fixed') {
-          $(offer_1[i]).html(
+        if (offer[0] === 'Fixed') {
+          $(offer1[i]).html(
             `<span>Save <br> $${(price - offer[1]).toFixed(2)}</span>`
           );
 
-          $(offer_2[i]).html(`$${offer[1]}`);
+          $(offer2[i]).html(`$${offer[1]}`);
         }
 
         /*=============================================
 				Agregamos la fecha al descontador
 				=============================================*/
 
-        $(offer_3[i]).attr(
+        $(offer3[i]).attr(
           'data-time',
 
           new Date(
-            parseInt(offer[2].split('-')[0]),
-            parseInt(offer[2].split('-')[1]) - 1,
-            parseInt(offer[2].split('-')[2])
+            parseInt(offer[2].split('-')[0], 10),
+            parseInt(offer[2].split('-')[1], 10) - 1,
+            parseInt(offer[2].split('-')[2], 10)
           )
         );
 
@@ -301,11 +303,11 @@ export class HomeHotTodayComponent implements OnInit {
 
         for (
           let f = 0;
-          f < JSON.parse($(review_1[i]).attr('reviews')).length;
+          f < JSON.parse($(review1[i]).attr('reviews')).length;
           f++
         ) {
           totalReview += Number(
-            JSON.parse($(review_1[i]).attr('reviews'))[f]['review']
+            JSON.parse($(review1[i]).attr('reviews'))[f]['review']
           );
         }
 
@@ -313,17 +315,17 @@ export class HomeHotTodayComponent implements OnInit {
 				Imprimimos el total de las calificaciones para cada producto
 				=============================================*/
 
-        let rating = Math.round(
-          totalReview / JSON.parse($(review_1[i]).attr('reviews')).length
+        const rating = Math.round(
+          totalReview / JSON.parse($(review1[i]).attr('reviews')).length
         );
 
-        $(review_3[i]).html(rating);
+        $(review3[i]).html(rating);
 
         for (let f = 1; f <= 5; f++) {
-          $(review_2[i]).append(`<option value="2">${f}</option>`);
+          $(review2[i]).append(`<option value="2">${f}</option>`);
 
-          if (rating == f) {
-            $(review_2[i]).children('option').val(1);
+          if (rating === f) {
+            $(review2[i]).children('option').val(1);
           }
         }
       }
@@ -361,21 +363,21 @@ export class HomeHotTodayComponent implements OnInit {
 	Función que nos avisa cuando finaliza el renderizado de Angular
 	=============================================*/
 
-  callbackBestSeller(topSales) {
+  callbackBestSeller(topSales): any {
     if (this.renderBestSeller) {
       this.renderBestSeller = false;
 
       /*=============================================
 			Capturamos la cantidad de bloques que existe en el DOM
 			=============================================*/
-      let topSaleBlock = $('.topSaleBlock');
-      let top20Array = [];
+      const topSaleBlock = $('.topSaleBlock');
+      const top20Array = [];
 
       /*=============================================
 			Ejecutamos en SetTimeOut - por cada bloque un segundo de espera
 			=============================================*/
 
-      setTimeout(function () {
+      setTimeout(() => {
         /*=============================================
 				Removemos el preload
 				=============================================*/
@@ -399,79 +401,75 @@ export class HomeHotTodayComponent implements OnInit {
           );
 
           /*=============================================
-					Hacemos un recorrido por el nuevo array de objetos
-					=============================================*/
-
-          let f;
-
-          for (f in top20Array[i]) {
-            /*=============================================
-						Definimos si el precio del producto tiene oferta o no
+          Hacemos un recorrido por el nuevo array de objetos y
+          Definimos si el precio del producto tiene oferta o no
 						=============================================*/
+          for (const f in top20Array[i]) {
+            if (top20Array[i].hasOwnProperty(f)) {
+              let price;
+              let type;
+              let value;
+              let offer;
+              let offerDate;
+              const today = new Date();
 
-            let price;
-            let type;
-            let value;
-            let offer;
-            let offerDate;
-            let today = new Date();
+              if (top20Array[i][f].offer !== '') {
+                offerDate = new Date(
+                  parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[0], 10),
+                  parseInt(
+                    JSON.parse(top20Array[i][f].offer)[2].split('-')[1], 10
+                  ) - 1,
+                  parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[2], 10)
+                );
 
-            if (top20Array[i][f].offer != '') {
-              offerDate = new Date(
-                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[0]),
-                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[1]) -
-                  1,
-                parseInt(JSON.parse(top20Array[i][f].offer)[2].split('-')[2])
-              );
+                if (today < offerDate) {
+                  type = JSON.parse(top20Array[i][f].offer)[0];
+                  value = JSON.parse(top20Array[i][f].offer)[1];
 
-              if (today < offerDate) {
-                type = JSON.parse(top20Array[i][f].offer)[0];
-                value = JSON.parse(top20Array[i][f].offer)[1];
+                  if (type === 'Disccount') {
+                    offer = (
+                      top20Array[i][f].price -
+                      (top20Array[i][f].price * value) / 100
+                    ).toFixed(2);
+                  }
 
-                if (type == 'Disccount') {
-                  offer = (
-                    top20Array[i][f].price -
-                    (top20Array[i][f].price * value) / 100
-                  ).toFixed(2);
+                  if (type === 'Fixed') {
+                    offer = value;
+                  }
+
+                  price = `<p class="ps-product__price sale">$${offer} <del>$${top20Array[i][f].price} </del></p>`;
+                } else {
+                  price = `<p class="ps-product__price">$${top20Array[i][f].price} </p>`;
                 }
-
-                if (type == 'Fixed') {
-                  offer = value;
-                }
-
-                price = `<p class="ps-product__price sale">$${offer} <del>$${top20Array[i][f].price} </del></p>`;
               } else {
                 price = `<p class="ps-product__price">$${top20Array[i][f].price} </p>`;
               }
-            } else {
-              price = `<p class="ps-product__price">$${top20Array[i][f].price} </p>`;
+
+              /*=============================================
+              Adicionar a la vista los productos clasificados
+              =============================================*/
+
+              $(topSaleBlock[i]).append(`
+
+                 <div class="ps-product--horizontal" style="z-index:10000">
+
+                                  <div class="ps-product__thumbnail">
+                                    <a href="product/${top20Array[i][f].url}">
+                                      <img src="assets/img/products/${top20Array[i][f].category}/${top20Array[i][f].image}">
+                                    </a>
+                                  </div>
+
+                                  <div class="ps-product__content">
+
+                                    <a class="ps-product__title" href="product/${top20Array[i][f].url}">${top20Array[i][f].name}</a>
+
+                                      ${price}
+                                 </div>
+
+                              </div>
+
+              `);
             }
-
-            /*=============================================
-						Adicionar a la vista los productos clasificados
-						=============================================*/
-
-            $(topSaleBlock[i]).append(`
-
-						   <div class="ps-product--horizontal" style="z-index:10000">
-
-                                <div class="ps-product__thumbnail">
-                                	<a href="product/${top20Array[i][f].url}">
-                                		<img src="assets/img/products/${top20Array[i][f].category}/${top20Array[i][f].image}">
-                                	</a>
-                                </div>
-
-                                <div class="ps-product__content">
-
-                                	<a class="ps-product__title" href="product/${top20Array[i][f].url}">${top20Array[i][f].name}</a>
-
-                                    ${price}
-
-                                </div>
-
-                            </div>
-
-						`);
           }
         }
 

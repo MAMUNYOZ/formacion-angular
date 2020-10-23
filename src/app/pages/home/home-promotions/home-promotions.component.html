@@ -11,7 +11,7 @@ class="ps-promotions">
         <div class="row">
 
             <div 
-			*ngFor="let banner of banner_default; let i = index"
+			*ngFor="let banner of bannerDefault; let i = index"
             class="col-md-6 col-12 ">
             	<a class="ps-collection" routerLink="product/{{url[i]}}">
             		<img src="{{path}}img/products/{{category[i]}}/default/{{banner}}" alt="">
