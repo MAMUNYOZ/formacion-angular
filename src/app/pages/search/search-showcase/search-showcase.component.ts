@@ -1,404 +1,326 @@
 import { Component, OnInit } from '@angular/core';
 import { Path } from '../../../config';
-import { Rating,
-  		 DinamicRating, 
-	     DinamicReviews, 
-	     DinamicPrice,
-	     Pagination,
-	     Select2Cofig, 
-	     Tabs } from '../../../functions';
+import {
+  Rating,
+  DinamicRating,
+  DinamicReviews,
+  DinamicPrice,
+  Pagination,
+  Select2Cofig,
+  Tabs,
+} from '../../../functions';
 
-import { ProductsService} from '../../../services/products.service';
+import { ProductsService } from '../../../services/products.service';
 import { UsersService } from '../../../services/users.service';
 
 import { ActivatedRoute, Router } from '@angular/router';
 
-declare var jQuery:any;
-declare var $:any;
+declare var jQuery: any;
+declare var $: any;
 
 @Component({
   selector: 'app-search-showcase',
   templateUrl: './search-showcase.component.html',
-  styleUrls: ['./search-showcase.component.css']
+  styleUrls: ['./search-showcase.component.css'],
 })
 export class SearchShowcaseComponent implements OnInit {
+  path: string = Path.url;
+  products: any[] = [];
+  render = true;
+  cargando = false;
+  rating: any[] = [];
+  reviews: any[] = [];
+  price: any[] = [];
+  params: string = null;
+  page;
+  productFound = 0;
+  currentRoute: string = null;
+  totalPage = 0;
+  sort: any;
+  sortItems: any[] = [];
+  sortValues: any[] = [];
+  properties: any[] = [
+    'category',
+    'name',
+    'store',
+    'sub_category',
+    'tags',
+    'title_list',
+    'url',
+  ];
+  listProducts: any[] = [];
 
- 	path:string = Path.url;
-  	products:any[] = [];
-  	render:boolean = true;
-  	cargando:boolean = false;
-  	rating:any[] = [];
-	reviews:any[] = [];
-	price:any[] = [];
-	params:string = null;
-	page;
-	productFound:number = 0;
-	currentRoute:string = null;
-	totalPage:number = 0;
-	sort;
-	sortItems:any[] = [];
-	sortValues:any[] = [];
-	properties:any[] = ["category","name","store","sub_category","tags","title_list","url"];
-	listProducts:any[] = [];
+  constructor(
+    private productsService: ProductsService,
+    private activateRoute: ActivatedRoute,
+    private usersService: UsersService,
+    private router: Router
+  ) {}
 
-  	constructor(private productsService: ProductsService,
-  		        private activateRoute: ActivatedRoute,
-  		        private usersService: UsersService,
-  		        private router: Router) { }
+  ngOnInit(): void {
+    this.cargando = true;
 
- 	ngOnInit(): void {
-
- 		this.cargando = true;
-
- 		/*=============================================
+    /*=============================================
 		Capturamos el parámetro URL
-		=============================================*/	
+		=============================================*/
 
-		this.params = this.activateRoute.snapshot.params["param"].split("&")[0];
-		this.sort = this.activateRoute.snapshot.params["param"].split("&")[1];
-		this.page = this.activateRoute.snapshot.params["param"].split("&")[2];
+    this.params = this.activateRoute.snapshot.params['param'].split('&')[0];
+    this.sort = this.activateRoute.snapshot.params['param'].split('&')[1];
+    this.page = this.activateRoute.snapshot.params['param'].split('&')[2];
 
-		/*=============================================
+    /*=============================================
 		Evaluamos que el segundo parámetro sea de paginación
-		=============================================*/	
-		if(Number.isInteger(Number(this.sort))){
+		=============================================*/
+    if (Number.isInteger(Number(this.sort))) {
+      this.page = this.sort;
+      this.sort = undefined;
+    }
 
-			this.page = this.sort;
-			this.sort = undefined;
-		
-		}
-
-		/*=============================================
+    /*=============================================
 		Evaluamos que el parámetro de orden no esté definido
-		=============================================*/	
+		=============================================*/
 
-		if(this.sort == undefined){
+    if (this.sort === undefined) {
+      this.currentRoute = `search/${this.params}`;
+    } else {
+      this.currentRoute = `search/${this.params}&${this.sort}`;
+    }
 
-			this.currentRoute = `search/${this.params}`;
-		
-		}else{
-
-			this.currentRoute = `search/${this.params}&${this.sort}`;
-
-		}
-		
-		/*=============================================
+    /*=============================================
 		Filtramos data de productos con todas las propiedades
-		=============================================*/	
-		this.properties.forEach(property=>{
+		=============================================*/
+    this.properties.forEach((property) => {
+      this.productsService
+        .getSearchData(property, this.params)
+        .subscribe((resp) => {
+          for (const i in resp) {
+            if (resp.hasOwnProperty(i)) {
+              this.listProducts.push(resp[i]);
+            }
+          }
 
-			this.productsService.getSearchData(property, this.params)
-			.subscribe(resp=>{
+          this.productsFnc(this.listProducts);
+        });
+    });
+  }
 
-				let i;
-				
-				for(i in resp){
-
-					this.listProducts.push(resp[i])
-
-				}	
-
-				this.productsFnc(this.listProducts);
-
-			})
-
-		})
-
-  	}
-
-  	/*=============================================
+  /*=============================================
 	Declaramos función para mostrar el catálogo de productos
-	=============================================*/	
+	=============================================*/
 
-  	productsFnc(response){
+  productsFnc(response): any {
+    if (response.length > 0) {
+      this.products = [];
 
-  		if(response.length > 0){
-
-	  		this.products = [];
-
-	  		/*=============================================
+      /*=============================================
 			Hacemos un recorrido por la respuesta que nos traiga el filtrado
-			=============================================*/	
+			=============================================*/
 
-	  		let i;
-	  		let getProducts = [];
-	  		let total = 0;
+      const getProducts = [];
+      let total = 0;
 
-	  		for(i in response){
+      for (const i in response) {
+        if (response.hasOwnProperty(i)) {
+          total++;
 
-	  			total++;
+          getProducts.push(response[i]);
+        }
+      }
 
-				getProducts.push(response[i]);						
-					
-			}
-
-			/*=============================================
+      /*=============================================
 			Definimos el total de productos y la paginación de productos
-			=============================================*/	
+			=============================================*/
 
-			this.productFound = total;
-			this.totalPage =  Math.ceil(Number(this.productFound)/6);
+      this.productFound = total;
+      this.totalPage = Math.ceil(Number(this.productFound) / 6);
 
-			/*=============================================
+      /*=============================================
 			Ordenamos el arreglo de objetos lo mas actual a lo más antiguo
 			=============================================*/
-			if(this.sort == undefined || this.sort == "fisrt"){
+      if (this.sort === undefined || this.sort === 'fisrt') {
+        getProducts.sort((a, b) => {
+          return b.date_created - a.date_created;
+        });
 
-				getProducts.sort(function (a, b) {
-				    return (b.date_created - a.date_created)
-				})
+        this.sortItems = [
+          'Los más nuevos',
+          'Los más antiguos',
+          'Los más populares',
+          'Los más baratos',
+          'Los más caros'
+        ];
 
-				this.sortItems = [
+        this.sortValues = ['first', 'latest', 'popularity', 'low', 'high'];
+      }
 
-					"Sort by first",
-					"Sort by latest",
-					"Sort by popularity",
-					"Sort by price: low to high",
-					"Sort by price: high to low"
-				]
-
-				this.sortValues = [
-
-					"first",
-					"latest",
-					"popularity",
-					"low",
-					"high"
-				]
-
-			}
-
-			/*=============================================
+      /*=============================================
 			Ordenamos el arreglo de objetos lo mas antiguo a lo más actual
 			=============================================*/
 
-			if(this.sort == "latest"){
+      if (this.sort === 'latest') {
+        getProducts.sort((a, b) => {
+          return a.date_created - b.date_created;
+        });
 
-				getProducts.sort(function (a, b) {
-				    return (a.date_created - b.date_created)
-				})
+        this.sortItems = [
+          'Los más antiguos',
+          'Los más nuevos',
+          'Los más populares',
+          'Los más baratos',
+          'Los más caros'
+        ];
 
-				this.sortItems = [
+        this.sortValues = ['latest', 'first', 'popularity', 'low', 'high'];
+      }
 
-					"Sort by latest",
-					"Sort by first",	
-					"Sort by popularity",
-					"Sort by price: low to high",
-					"Sort by price: high to low"
-				]
-
-				this.sortValues = [
-
-					"latest",
-					"first",
-					"popularity",
-					"low",
-					"high"
-				]
-				
-			}
-
-			/*=============================================
+      /*=============================================
 			Ordenamos el arreglo de objetos lo mas visto
 			=============================================*/
 
-			if(this.sort == "popularity"){
+      if (this.sort === 'popularity') {
+        getProducts.sort((a, b) => {
+          return b.views - a.views;
+        });
 
-				getProducts.sort(function (a, b) {
-				    return (b.views - a.views)
-				})
+        this.sortItems = [
+          'Los más populares',
+          'Los más nuevos',
+          'Los más antiguos',
+          'Los más baratos',
+          'Los más caros'
+        ];
 
-				this.sortItems = [
+        this.sortValues = ['popularity', 'first', 'latest', 'low', 'high'];
+      }
 
-					"Sort by popularity",
-					"Sort by first",
-					"Sort by latest",					
-					"Sort by price: low to high",
-					"Sort by price: high to low"
-				]
-
-				this.sortValues = [
-
-					"popularity",
-					"first",
-					"latest",				
-					"low",
-					"high"
-				]
-				
-			}
-
-			/*=============================================
+      /*=============================================
 			Ordenamos el arreglo de objetos de menor a mayor precio
 			=============================================*/
 
-			if(this.sort == "low"){
+      if (this.sort === 'low') {
+        getProducts.sort((a, b) => {
+          return a.price - b.price;
+        });
 
-				getProducts.sort(function (a, b) {
-				    return (a.price - b.price)
-				})
+        this.sortItems = [
+          'Los más baratos',
+          'Los más nuevos',
+          'Los más antiguos',
+          'Los más populares',
+          'Los más caros'
+        ];
 
-				this.sortItems = [
+        this.sortValues = ['low', 'first', 'latest', 'popularity', 'high'];
+      }
 
-					"Sort by price: low to high",			
-					"Sort by first",
-					"Sort by latest",					
-					"Sort by popularity",
-					"Sort by price: high to low"
-				]
-
-				this.sortValues = [
-
-					"low",
-					"first",
-					"latest",
-					"popularity",
-					"high"
-				]
-
-				
-			}
-
-			/*=============================================
+      /*=============================================
 			Ordenamos el arreglo de objetos de mayor a menor precio
 			=============================================*/
 
-			if(this.sort == "high"){
+      if (this.sort === 'high') {
+        getProducts.sort((a, b) => {
+          return b.price - a.price;
+        });
 
-				getProducts.sort(function (a, b) {
-				    return (b.price - a.price)
-				})
+        this.sortItems = [
+          'Los más caros',
+          'Los más nuevos',
+          'Los más antiguos',
+          'Los más populares',
+          'Los más baratos'
+        ];
 
-				this.sortItems = [
+        this.sortValues = ['high', 'first', 'latest', 'popularity', 'low'];
+      }
 
-					"Sort by price: high to low",		
-					"Sort by first",
-					"Sort by latest",					
-					"Sort by popularity",
-					"Sort by price: low to high"	
-					
-				]
-
-				this.sortValues = [
-
-					"high",
-					"first",
-					"latest",
-					"popularity",
-					"low"
-					
-				]
-
-				
-			}
-
-			/*=============================================
+      /*=============================================
 			Filtramos solo hasta 10 productos
 			=============================================*/
 
-			getProducts.forEach((product, index)=>{
-
-				/*=============================================
+      getProducts.forEach((product, index) => {
+        /*=============================================
 				Evaluamos si viene número de página definida
 				=============================================*/
 
-				if(this.page == undefined){
+        if (this.page === undefined) {
+          this.page = 1;
+        }
 
-					this.page = 1;
-				}	
-
-				/*=============================================
+        /*=============================================
 				Configuramos la paginación desde - hasta
-				=============================================*/						
+				=============================================*/
 
-				let first = Number(index) + (this.page*6)-6; 
-				let last = 6*this.page;
+        const first = Number(index) + this.page * 6 - 6;
+        const last = 6 * this.page;
 
-				/*=============================================
+        /*=============================================
 				Filtramos los productos a mostrar
-				=============================================*/		
+				=============================================*/
 
-				if(first < last){
+        if (first < last) {
+          if (getProducts[first] !== undefined) {
+            this.products.push(getProducts[first]);
 
-					if(getProducts[first] != undefined){
+            this.rating.push(DinamicRating.fnc(getProducts[first]));
 
-						this.products.push(getProducts[first]);
+            this.reviews.push(DinamicReviews.fnc(this.rating[index]));
 
-						this.rating.push(DinamicRating.fnc(getProducts[first]));
-						
-						this.reviews.push(DinamicReviews.fnc(this.rating[index]));
+            this.price.push(DinamicPrice.fnc(getProducts[first]));
 
-						this.price.push(DinamicPrice.fnc(getProducts[first]));
+            this.cargando = false;
+          }
+        }
+      });
+    } else {
+      this.cargando = false;
+    }
+  }
 
-						this.cargando = false;
-
-					}
-				}
-
-			})
-
-		}else{
-
-			this.cargando = false;
-
-		}
-
-  	}
-
-  	/*=============================================
+  /*=============================================
 	Función que nos avisa cuando finaliza el renderizado de Angular
 	=============================================*/
 
-  	callback(params){
+  callback(params): any {
+    if (this.render) {
+      this.render = false;
 
-  		if(this.render){
+      Rating.fnc();
+      Pagination.fnc();
+      Select2Cofig.fnc();
+      Tabs.fnc();
 
-  			this.render = false;
-
-  			Rating.fnc();
-  			Pagination.fnc();
-  			Select2Cofig.fnc();
-  			Tabs.fnc();
-
-  			/*=============================================
+      /*=============================================
 			Captura del Select Sort Items
-			=============================================*/	
+			=============================================*/
 
-			$(".sortItems").change(function(){
+      $('.sortItems').change(function(): any {
+        window.open(`search/${params}&${$(this).val()}`, '_top');
+      });
+    }
+  }
 
-				window.open(`search/${params}&${$(this).val()}`, '_top')
-
-			})
-  		}
-  	}
-
-	/*=============================================
-	Función para agregar productos a la lista de deseos	
+  /*=============================================
+	Función para agregar productos a la lista de deseos
 	=============================================*/
 
-	addWishlist(product){		  
-		this.usersService.addWishlist(product);
-	}
+  addWishlist(product): any {
+    this.usersService.addWishlist(product);
+  }
 
-
-	/*=============================================
+  /*=============================================
 	Función para agregar productos al carrito de compras
 	=============================================*/
 
-	addShoppingCart(product, unit, details){
+  addShoppingCart(product, unit, details): any {
+    const url = this.router.url;
 
-		let url = this.router.url;
+    const item = {
+      product: product,
+      unit: unit,
+      details: details,
+      url: url,
+    };
 
-		let item = {
-		
-			product: product,
-			unit: unit,
-			details: details,
-			url:url
-		}
-
-		this.usersService.addSoppingCart(item);
-
-	}
-
+    this.usersService.addSoppingCart(item);
+  }
 }
