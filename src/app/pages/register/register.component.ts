@@ -30,18 +30,18 @@ export class RegisterComponent implements OnInit {
     =============================================*/
 
     // Disable form submissions if there are invalid fields
-    (function () {
+    (() => {
       'use strict';
       window.addEventListener(
         'load',
-        function () {
+        () => {
           // Get the forms we want to add validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
+          const forms = document.getElementsByClassName('needs-validation');
           // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function (form) {
+          const validation = Array.prototype.filter.call(forms, (form) => {
             form.addEventListener(
               'submit',
-              function (event) {
+              (event) => {
                 if (form.checkValidity() === false) {
                   event.preventDefault();
                   event.stopPropagation();
@@ -61,17 +61,17 @@ export class RegisterComponent implements OnInit {
   Capitalizar la primera letra de nombre y apellido
   =============================================*/
 
-  capitalize(input) {
+  capitalize(input): any {
     input.value = Capitalize.fnc(input.value);
   }
 
   /*=============================================
   Validación de expresión regular del formulario
   =============================================*/
-  validate(input) {
+  validate(input): any {
     let pattern;
 
-    if ($(input).attr('name') == 'username') {
+    if ($(input).attr('name') === 'username') {
       pattern = /^[A-Za-z]{2,8}$/;
 
       input.value = input.value.toLowerCase();
@@ -91,7 +91,7 @@ export class RegisterComponent implements OnInit {
         });
     }
 
-    if ($(input).attr('name') == 'password') {
+    if ($(input).attr('name') === 'password') {
       pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$/;
     }
 
@@ -106,7 +106,7 @@ export class RegisterComponent implements OnInit {
   Envío del formulario
   =============================================*/
 
-  onSubmit(f: NgForm) {
+  onSubmit(f: NgForm): any {
     if (f.invalid) {
       return;
     }
@@ -125,18 +125,18 @@ export class RegisterComponent implements OnInit {
 
     this.usersService.registerAuth(this.user).subscribe(
       (resp) => {
-        if (resp['email'] == this.user.email) {
+        if (resp['email'] === this.user.email) {
           /*=============================================
         Enviar correo de verificación
         =============================================*/
 
-          let body = {
+          const body = {
             requestType: 'VERIFY_EMAIL',
             idToken: resp['idToken'],
           };
 
-          this.usersService.sendEmailVerificationFnc(body).subscribe((resp) => {
-            if (resp['email'] === this.user.email) {
+          this.usersService.sendEmailVerificationFnc(body).subscribe((resp2) => {
+            if (resp2['email'] === this.user.email) {
               /*=============================================
             Registro en Firebase Database
             =============================================*/
@@ -148,7 +148,7 @@ export class RegisterComponent implements OnInit {
 
               this.usersService
                 .registerDatabase(this.user)
-                .subscribe((resp) => {
+                .subscribe((resp3) => {
                   Sweetalert.fnc(
                     'success',
                     'Confirma tu cuenta en el email que te hemos enviado (comprueba spam)',
@@ -169,9 +169,9 @@ export class RegisterComponent implements OnInit {
   Registro con Facebook
   =============================================*/
 
-  facebookRegister() {
-    let localUsersService = this.usersService;
-    let localUser = this.user;
+  facebookRegister(): any {
+    const localUsersService = this.usersService;
+    const localUser = this.user;
 
     // https://firebase.google.com/docs/web/setup
     // Crea una nueva APP en Settings
@@ -199,27 +199,27 @@ export class RegisterComponent implements OnInit {
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    //https://firebase.google.com/docs/auth/web/facebook-login
+    // https://firebase.google.com/docs/auth/web/facebook-login
 
     /*=============================================
     Crea una instancia del objeto proveedor de Facebook
     =============================================*/
 
-    var provider = new firebase.auth.FacebookAuthProvider();
+    const provider = new firebase.auth.FacebookAuthProvider();
 
     /*=============================================
     acceder con una ventana emergente y con certificado SSL (https)
     =============================================*/
-    //ng serve --ssl true --ssl-cert "/path/to/file.crt" --ssl-key "/path/to/file.key"
+    // ng serve --ssl true --ssl-cert "/path/to/file.crt" --ssl-key "/path/to/file.key"
 
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
+      .then((result) => {
         registerFirebaseDatabase(result, localUser, localUsersService);
       })
-      .catch(function (error) {
-        var errorMessage = error.message;
+      .catch((error) => {
+        const errorMessage = error.message;
 
         Sweetalert.fnc('error', errorMessage, 'register');
       });
@@ -228,40 +228,40 @@ export class RegisterComponent implements OnInit {
     Registramos al usuario en Firebase Database
     =============================================*/
 
-    function registerFirebaseDatabase(result, localUser, localUsersService) {
-      var user = result.user;
+    function registerFirebaseDatabase(result, localUserF, localUsersServiceF): any {
+      const user = result.user;
 
       if (user.P) {
-        localUser.displayName = user.displayName;
-        localUser.email = user.email;
-        localUser.idToken = user.b.b.g;
-        localUser.method = 'facebook';
-        localUser.username = user.email.split('@')[0];
-        localUser.picture = user.photoURL;
+        localUserF.displayName = user.displayName;
+        localUserF.email = user.email;
+        localUserF.idToken = user.b.b.g;
+        localUserF.method = 'facebook';
+        localUserF.username = user.email.split('@')[0];
+        localUserF.picture = user.photoURL;
 
         /*=============================================
         Evitar que se dupliquen los registros en Firebase Database
         =============================================*/
 
-        localUsersService
+        localUsersServiceF
           .getFilterData('email', user.email)
           .subscribe((resp) => {
             if (Object.keys(resp).length > 0) {
               Sweetalert.fnc(
                 'error',
-                `You're already signed in, please login with ${
+                `Ya te has registrado, por favor accede desde el login ${
                   resp[Object.keys(resp)[0]].method
                 } method`,
                 'login'
               );
             } else {
-              localUsersService
-                .registerDatabase(localUser)
-                .subscribe((resp) => {
-                  if (resp['name'] != '') {
+              localUsersServiceF
+                .registerDatabase(localUserF)
+                .subscribe((resp2) => {
+                  if (resp2['name'] !== '') {
                     Sweetalert.fnc(
                       'success',
-                      'Please Login with facebook',
+                      'Por favor accede con facebook',
                       'login'
                     );
                   }
@@ -276,9 +276,9 @@ export class RegisterComponent implements OnInit {
   Registro con Google
   =============================================*/
 
-  googleRegister() {
-    let localUsersService = this.usersService;
-    let localUser = this.user;
+  googleRegister(): any {
+    const localUsersService = this.usersService;
+    const localUser = this.user;
 
     // https://firebase.google.com/docs/web/setup
     // Crea una nueva APP en Settings
@@ -292,39 +292,39 @@ export class RegisterComponent implements OnInit {
 
     // Your web app's Firebase configuration
     const firebaseConfig = {
-      apiKey: "AIzaSyCqFLh0bhsvNgN0uOIlkQcM88oWLUx9c7A",
-      authDomain: "ecommerce-1b4b4.firebaseapp.com",
-      databaseURL: "https://ecommerce-1b4b4.firebaseio.com",
-      projectId: "ecommerce-1b4b4",
-      storageBucket: "ecommerce-1b4b4.appspot.com",
-      messagingSenderId: "352173451063",
-      appId: "1:352173451063:web:3fc85f4a390a97396b1cb2",
-      measurementId: "G-32BYRRNGWY",
+      apiKey: 'AIzaSyCqFLh0bhsvNgN0uOIlkQcM88oWLUx9c7A',
+      authDomain: 'ecommerce-1b4b4.firebaseapp.com',
+      databaseURL: 'https://ecommerce-1b4b4.firebaseio.com',
+      projectId: 'ecommerce-1b4b4',
+      storageBucket: 'ecommerce-1b4b4.appspot.com',
+      messagingSenderId: '352173451063',
+      appId: '1:352173451063:web:3fc85f4a390a97396b1cb2',
+      measurementId: 'G-32BYRRNGWY',
     };
 
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    //https://firebase.google.com/docs/auth/web/google-signin
+    // https://firebase.google.com/docs/auth/web/google-signin
 
     /*=============================================
     Crea una instancia del objeto proveedor de Google
     =============================================*/
 
-    var provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider();
 
     /*=============================================
-    acceder con una ventana emergente 
+    acceder con una ventana emergente
     =============================================*/
 
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
+      .then((result) => {
         registerFirebaseDatabase(result, localUser, localUsersService);
       })
-      .catch(function (error) {
-        var errorMessage = error.message;
+      .catch((error) => {
+        const errorMessage = error.message;
 
         Sweetalert.fnc('error', errorMessage, 'register');
       });
@@ -333,40 +333,40 @@ export class RegisterComponent implements OnInit {
     Registramos al usuario en Firebase Database
     =============================================*/
 
-    function registerFirebaseDatabase(result, localUser, localUsersService) {
-      var user = result.user;
+    function registerFirebaseDatabase(result, localUserG, localUsersServiceG): any {
+      const user = result.user;
 
       if (user.P) {
-        localUser.displayName = user.displayName;
-        localUser.email = user.email;
-        localUser.idToken = user.b.b.g;
-        localUser.method = 'google';
-        localUser.username = user.email.split('@')[0];
-        localUser.picture = user.photoURL;
+        localUserG.displayName = user.displayName;
+        localUserG.email = user.email;
+        localUserG.idToken = user.b.b.g;
+        localUserG.method = 'google';
+        localUserG.username = user.email.split('@')[0];
+        localUserG.picture = user.photoURL;
 
         /*=============================================
         Evitar que se dupliquen los registros en Firebase Database
         =============================================*/
 
-        localUsersService
+        localUsersServiceG
           .getFilterData('email', user.email)
           .subscribe((resp) => {
             if (Object.keys(resp).length > 0) {
               Sweetalert.fnc(
                 'error',
-                `You're already signed in, please login with ${
+                `Ya te has registrado, por favor accede desde el login ${
                   resp[Object.keys(resp)[0]].method
                 } method`,
                 'login'
               );
             } else {
-              localUsersService
+              localUsersServiceG
                 .registerDatabase(localUser)
-                .subscribe((resp) => {
-                  if (resp['name'] != '') {
+                .subscribe((resp2) => {
+                  if (resp2['name'] !== '') {
                     Sweetalert.fnc(
                       'success',
-                      'Please Login with google',
+                      'Por favor acceda con Google',
                       'login'
                     );
                   }
