@@ -37,7 +37,7 @@ export class LoginComponent implements OnInit {
 
     if (
       localStorage.getItem('rememberMe') &&
-      localStorage.getItem('rememberMe') == 'yes'
+      localStorage.getItem('rememberMe') === 'yes'
     ) {
       this.user.email = localStorage.getItem('email');
       this.rememberMe = true;
@@ -48,18 +48,18 @@ export class LoginComponent implements OnInit {
 		=============================================*/
 
     // Disable form submissions if there are invalid fields
-    (function () {
+    (() => {
       'use strict';
       window.addEventListener(
         'load',
-        function () {
+        () => {
           // Get the forms we want to add validation styles to
-          var forms = document.getElementsByClassName('needs-validation');
+          const forms = document.getElementsByClassName('needs-validation');
           // Loop over them and prevent submission
-          var validation = Array.prototype.filter.call(forms, function (form) {
+          const validation = Array.prototype.filter.call(forms, (form) => {
             form.addEventListener(
               'submit',
-              function (event) {
+              (event: any) => {
                 if (form.checkValidity() === false) {
                   event.preventDefault();
                   event.stopPropagation();
@@ -79,10 +79,10 @@ export class LoginComponent implements OnInit {
 		=============================================*/
 
     if (
-      this.activatedRoute.snapshot.queryParams['oobCode'] != undefined &&
-      this.activatedRoute.snapshot.queryParams['mode'] == 'verifyEmail'
+      this.activatedRoute.snapshot.queryParams['oobCode'] !== undefined &&
+      this.activatedRoute.snapshot.queryParams['mode'] === 'verifyEmail'
     ) {
-      let body = {
+      const body = {
         oobCode: this.activatedRoute.snapshot.queryParams['oobCode'],
       };
 
@@ -95,34 +95,34 @@ export class LoginComponent implements OnInit {
 
             this.usersService
               .getFilterData('email', resp['email'])
-              .subscribe((resp) => {
-                for (const i in resp) {
-                  let id = Object.keys(resp).toString();
+              .subscribe((resp2) => {
+                for (const i in resp2) {
+                  if (resp2.hasOwnProperty(i)) {
+                    const id = Object.keys(resp2).toString();
 
-                  let value = {
-                    needConfirm: true,
-                  };
+                    const value = {
+                      needConfirm: true,
+                    };
 
-                  this.usersService.patchData(id, value).subscribe((resp) => {
-                    if (resp['needConfirm']) {
-                      Sweetalert.fnc(
-                        'success',
-                        '¡Email confirm, login now!',
-                        'login'
-                      );
-                    }
-                  });
+                    this.usersService
+                      .patchData(id, value)
+                      .subscribe((resp3) => {
+                        if (resp3['needConfirm']) {
+                          Sweetalert.fnc(
+                            'success',
+                            '¡Email confirmado, accede ahora!',
+                            'login'
+                          );
+                        }
+                      });
+                  }
                 }
               });
           }
         },
         (err) => {
-          if (err.error.error.message == 'INVALID_OOB_CODE') {
-            Sweetalert.fnc(
-              'error',
-              'The email has already been confirmed',
-              'login'
-            );
+          if (err.error.error.message === 'INVALID_OOB_CODE') {
+            Sweetalert.fnc('error', 'El email ya ha sido confirmado', 'login');
           }
         }
       );
@@ -133,15 +133,15 @@ export class LoginComponent implements OnInit {
 		=============================================*/
 
     if (
-      this.activatedRoute.snapshot.queryParams['oobCode'] != undefined &&
-      this.activatedRoute.snapshot.queryParams['mode'] == 'resetPassword'
+      this.activatedRoute.snapshot.queryParams['oobCode'] !== undefined &&
+      this.activatedRoute.snapshot.queryParams['mode'] === 'resetPassword'
     ) {
-      let body = {
+      const body = {
         oobCode: this.activatedRoute.snapshot.queryParams['oobCode'],
       };
 
       this.usersService.verifyPasswordResetCodeFnc(body).subscribe((resp) => {
-        if (resp['requestType'] == 'PASSWORD_RESET') {
+        if (resp['requestType'] === 'PASSWORD_RESET') {
           $('#newPassword').modal();
         }
       });
@@ -152,10 +152,10 @@ export class LoginComponent implements OnInit {
     Validación de expresión regular del formulario
     =============================================*/
 
-  validate(input) {
+  validate(input): any {
     let pattern;
 
-    if ($(input).attr('name') == 'password') {
+    if ($(input).attr('name') === 'password') {
       pattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{4,}$/;
     }
 
@@ -170,7 +170,7 @@ export class LoginComponent implements OnInit {
     Envío del formulario
     =============================================*/
 
-  onSubmit(f: NgForm) {
+  onSubmit(f: NgForm): any {
     if (f.invalid) {
       return;
     }
@@ -179,7 +179,7 @@ export class LoginComponent implements OnInit {
       	Alerta suave mientras se registra el usuario
       	=============================================*/
 
-    Sweetalert.fnc('loading', 'Loading...', null);
+    Sweetalert.fnc('loading', 'Cargando...', null);
 
     /*=============================================
        	Validar que el correo esté verificado
@@ -198,20 +198,19 @@ export class LoginComponent implements OnInit {
 
             this.usersService.loginAuth(this.user).subscribe(
               (resp2) => {
-
-                console.log("resp", resp2);
+                console.log('resp', resp2);
                 /*=============================================
 			    		Almacenar id Token en Firebase Database
 			    		=============================================*/
 
-                let id = Object.keys(resp1).toString();
+                const id = Object.keys(resp1).toString();
 
-                let value = {
+                const value = {
                   idToken: resp2['idToken'],
                 };
 
                 this.usersService.patchData(id, value).subscribe((resp3) => {
-                  if (resp3['idToken'] != '') {
+                  if (resp3['idToken'] !== '') {
                     Sweetalert.fnc('close', null, null);
 
                     /*=============================================
@@ -230,7 +229,7 @@ export class LoginComponent implements OnInit {
 								Almacenamos la fecha de expiración localstorage
 								=============================================*/
 
-                    let today = new Date();
+                    const today = new Date();
 
                     today.setSeconds(resp2['expiresIn']);
 
@@ -262,7 +261,7 @@ export class LoginComponent implements OnInit {
               }
             );
           } else {
-            Sweetalert.fnc('error', 'Need Confirm your email', null);
+            Sweetalert.fnc('error', 'Necesitas confirmar tu email', null);
           }
         }
       });
@@ -272,19 +271,19 @@ export class LoginComponent implements OnInit {
    	Enviar solicitud para recuperar Contraseña
     =============================================*/
 
-  resetPassword(value) {
-    Sweetalert.fnc('loading', 'Loading...', null);
+  resetPassword(value): any {
+    Sweetalert.fnc('loading', 'Cargando...', null);
 
-    let body = {
+    const body = {
       requestType: 'PASSWORD_RESET',
       email: value,
     };
 
     this.usersService.sendPasswordResetEmailFnc(body).subscribe((resp) => {
-      if (resp['email'] == value) {
+      if (resp['email'] === value) {
         Sweetalert.fnc(
           'success',
-          'Check your email to change the password',
+          'Revisa tu email para cambiar la clave',
           'login'
         );
       }
@@ -295,20 +294,20 @@ export class LoginComponent implements OnInit {
    	Enviar nueva Contraseña
     =============================================*/
 
-  newPassword(value) {
-    if (value != '') {
-      Sweetalert.fnc('loading', 'Loading...', null);
+  newPassword(value): any {
+    if (value !== '') {
+      Sweetalert.fnc('loading', 'Cargando...', null);
 
-      let body = {
+      const body = {
         oobCode: this.activatedRoute.snapshot.queryParams['oobCode'],
         newPassword: value,
       };
 
       this.usersService.confirmPasswordResetFnc(body).subscribe((resp) => {
-        if (resp['requestType'] == 'PASSWORD_RESET') {
+        if (resp['requestType'] === 'PASSWORD_RESET') {
           Sweetalert.fnc(
             'success',
-            'Password change successful, login now',
+            'Clave cambiada correctamente, acceda ahora',
             'login'
           );
         }
@@ -320,9 +319,9 @@ export class LoginComponent implements OnInit {
   	Login con Facebook
   	=============================================*/
 
-  facebookLogin() {
-    let localUsersService = this.usersService;
-    let localUser = this.user;
+  facebookLogin(): any {
+    const localUsersService = this.usersService;
+    const localUser = this.user;
 
     // https://firebase.google.com/docs/web/setup
     // Crea una nueva APP en Settings
@@ -346,31 +345,30 @@ export class LoginComponent implements OnInit {
       measurementId: 'G-32BYRRNGWY',
     };
 
-
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    //https://firebase.google.com/docs/auth/web/facebook-login
+    // https://firebase.google.com/docs/auth/web/facebook-login
 
     /*=============================================
 		Crea una instancia del objeto proveedor de Facebook
 		=============================================*/
 
-    var provider = new firebase.auth.FacebookAuthProvider();
+    const provider = new firebase.auth.FacebookAuthProvider();
 
     /*=============================================
 		acceder con una ventana emergente y con certificado SSL (https)
 		=============================================*/
-    //ng serve --ssl true --ssl-cert "/path/to/file.crt" --ssl-key "/path/to/file.key"
+    // ng serve --ssl true --ssl-cert "/path/to/file.crt" --ssl-key "/path/to/file.key"
 
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
+      .then((result) => {
         loginFirebaseDatabase(result, localUser, localUsersService);
       })
-      .catch(function (error) {
-        var errorMessage = error.message;
+      .catch((error) => {
+        const errorMessage = error.message;
 
         Sweetalert.fnc('error', errorMessage, 'login');
       });
@@ -379,26 +377,26 @@ export class LoginComponent implements OnInit {
 		Registramos al usuario en Firebase Database
 		=============================================*/
 
-    function loginFirebaseDatabase(result, localUser, localUsersService) {
-      var user = result.user;
+    function loginFirebaseDatabase(result, localUserFacebook, localUsersService): any {
+      const user = result.user;
 
       if (user.P) {
         localUsersService
           .getFilterData('email', user.email)
           .subscribe((resp) => {
             if (Object.keys(resp).length > 0) {
-              if (resp[Object.keys(resp)[0]].method == 'facebook') {
+              if (resp[Object.keys(resp)[0]].method === 'facebook') {
                 /*=============================================
 							Actualizamos el idToken en Firebase
 							=============================================*/
 
-                let id = Object.keys(resp).toString();
+                const id = Object.keys(resp).toString();
 
-                let body = {
+                const body = {
                   idToken: user.b.b.g,
                 };
 
-                localUsersService.patchData(id, body).subscribe((resp) => {
+                localUsersService.patchData(id, body).subscribe((resp2) => {
                   /*=============================================
 								Almacenamos el Token de seguridad en el localstorage
 								=============================================*/
@@ -415,7 +413,7 @@ export class LoginComponent implements OnInit {
 								Almacenamos la fecha de expiración localstorage
 								=============================================*/
 
-                  let today = new Date();
+                  const today = new Date();
 
                   today.setSeconds(3600);
 
@@ -439,7 +437,7 @@ export class LoginComponent implements OnInit {
             } else {
               Sweetalert.fnc(
                 'error',
-                'This account is not registered',
+                'Esta cuenta no está registada',
                 'register'
               );
             }
@@ -452,9 +450,9 @@ export class LoginComponent implements OnInit {
   	Login con Google
   	=============================================*/
 
-  googleLogin() {
-    let localUsersService = this.usersService;
-    let localUser = this.user;
+  googleLogin(): any {
+    const localUsersService = this.usersService;
+    const localUser = this.user;
 
     // https://firebase.google.com/docs/web/setup
     // Crea una nueva APP en Settings
@@ -478,30 +476,29 @@ export class LoginComponent implements OnInit {
       measurementId: 'G-32BYRRNGWY',
     };
 
-
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
 
-    //https://firebase.google.com/docs/auth/web/facebook-login
+    // https://firebase.google.com/docs/auth/web/facebook-login
 
     /*=============================================
 		Crea una instancia del objeto proveedor de Google
 		=============================================*/
 
-    var provider = new firebase.auth.GoogleAuthProvider();
+    const provider = new firebase.auth.GoogleAuthProvider();
 
     /*=============================================
-		acceder con una ventana emergente 
+		acceder con una ventana emergente
 		=============================================*/
 
     firebase
       .auth()
       .signInWithPopup(provider)
-      .then(function (result) {
+      .then((result) => {
         loginFirebaseDatabase(result, localUser, localUsersService);
       })
-      .catch(function (error) {
-        var errorMessage = error.message;
+      .catch((error) => {
+        const errorMessage = error.message;
 
         Sweetalert.fnc('error', errorMessage, 'login');
       });
@@ -510,26 +507,26 @@ export class LoginComponent implements OnInit {
 		Registramos al usuario en Firebase Database
 		=============================================*/
 
-    function loginFirebaseDatabase(result, localUser, localUsersService) {
-      var user = result.user;
+    function loginFirebaseDatabase(result, localUserGoogle, localUsersService): any {
+      const user = result.user;
 
       if (user.P) {
         localUsersService
           .getFilterData('email', user.email)
           .subscribe((resp) => {
             if (Object.keys(resp).length > 0) {
-              if (resp[Object.keys(resp)[0]].method == 'google') {
+              if (resp[Object.keys(resp)[0]].method === 'google') {
                 /*=============================================
 							Actualizamos el idToken en Firebase
 							=============================================*/
 
-                let id = Object.keys(resp).toString();
+                const id = Object.keys(resp).toString();
 
-                let body = {
+                const body = {
                   idToken: user.b.b.g,
                 };
 
-                localUsersService.patchData(id, body).subscribe((resp) => {
+                localUsersService.patchData(id, body).subscribe((resp2) => {
                   /*=============================================
 								Almacenamos el Token de seguridad en el localstorage
 								=============================================*/
@@ -546,7 +543,7 @@ export class LoginComponent implements OnInit {
 								Almacenamos la fecha de expiración localstorage
 								=============================================*/
 
-                  let today = new Date();
+                  const today = new Date();
 
                   today.setSeconds(3600);
 

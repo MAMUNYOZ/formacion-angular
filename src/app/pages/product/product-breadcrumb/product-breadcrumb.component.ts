@@ -9,65 +9,64 @@ import * as Cookies from 'js-cookie';
 @Component({
   selector: 'app-product-breadcrumb',
   templateUrl: './product-breadcrumb.component.html',
-  styleUrls: ['./product-breadcrumb.component.css']
+  styleUrls: ['./product-breadcrumb.component.css'],
 })
 export class ProductBreadcrumbComponent implements OnInit {
+  breadcrumb: string = null;
 
-   breadcrumb:string = null;
+  constructor(
+    private activateRoute: ActivatedRoute,
+    private productsService: ProductsService,
+    private storesService: StoresService
+  ) {}
 
- 	constructor(private activateRoute: ActivatedRoute,
-              private productsService: ProductsService,
-              private storesService:StoresService) { }
-
-  	ngOnInit(): void {
-
-       /*=============================================
+  ngOnInit(): void {
+    /*=============================================
        Capturamos el parámetro URL
-       =============================================*/	
+       =============================================*/
 
-        this.breadcrumb = this.activateRoute.snapshot.params["param"].replace(/[-]/g, " ");
+    this.breadcrumb = this.activateRoute.snapshot.params['param'].replace(
+      /[-]/g,
+      ' '
+    );
 
-        /*=============================================
+    /*=============================================
         Actualizar vistas de producto
-        =============================================*/  
+        =============================================*/
 
-        this.productsService.getFilterData("url", this.activateRoute.snapshot.params["param"])
-        .subscribe(resp=>{
+    this.productsService
+      .getFilterData('url', this.activateRoute.snapshot.params['param'])
+      .subscribe((resp) => {
+        for (const i in resp) {
+          if (resp.hasOwnProperty(i)){
+            const id = Object.keys(resp).toString();
 
-            for(const i in resp){
+            const value = {
+              views: Number(resp[i].views + 1),
+            };
 
-              let id = Object.keys(resp).toString();
-              
-              let value = {
-                "views": Number(resp[i].views+1)
-              }
+            this.productsService.patchData(id, value).subscribe((resp) => {});
 
-              this.productsService.patchData(id, value)
-              .subscribe(resp=>{})
-
-            }
-
-        })
-
-        /*=============================================
-        Capturamos el parámetro URL del cupón de la tienda
-        =============================================*/ 
-
-        if(this.activateRoute.snapshot.queryParams["coupon"] != undefined){
-                       
-            this.storesService.getFilterData("url", this.activateRoute.snapshot.queryParams["coupon"])
-            .subscribe(resp=>{
-                
-                for(const i in resp){
-
-                    Cookies.set('coupon', resp[i].url, { expires: 7 })
-
-                }
-
-            })
+          }
 
         }
+      });
 
-  	}
+    /*=============================================
+        Capturamos el parámetro URL del cupón de la tienda
+        =============================================*/
 
+    if (this.activateRoute.snapshot.queryParams['coupon'] !== undefined) {
+      this.storesService
+        .getFilterData('url', this.activateRoute.snapshot.queryParams['coupon'])
+        .subscribe((resp) => {
+          for (const i in resp) {
+            if (resp.hasOwnProperty(i)){
+              Cookies.set('coupon', resp[i].url, { expires: 7 });
+            }
+
+          }
+        });
+    }
+  }
 }
