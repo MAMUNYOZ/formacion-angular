@@ -46,7 +46,7 @@ export class UsersService {
 	Registro en Firebase Authentication
 	=============================================*/
 
-  registerAuth(user: UsersModel) {
+  registerAuth(user: UsersModel): any {
     return this.http.post(`${this.register}`, user);
   }
 
@@ -54,7 +54,7 @@ export class UsersService {
 	Registro en Firebase Database
 	=============================================*/
 
-  registerDatabase(user: UsersModel) {
+  registerDatabase(user: UsersModel): any {
     delete user.firstName;
     delete user.lastName;
     delete user.password;
@@ -67,7 +67,7 @@ export class UsersService {
   	Filtrar data para buscar coincidencias
   	=============================================*/
 
-  getFilterData(orderBy: string, equalTo: string) {
+  getFilterData(orderBy: string, equalTo: string): any {
     return this.http.get(
       `${this.api}users.json?orderBy="${orderBy}"&equalTo="${equalTo}"&print=pretty`
     );
@@ -77,7 +77,7 @@ export class UsersService {
   	Login en Firebase Authentication
   	=============================================*/
 
-  loginAuth(user: UsersModel) {
+  loginAuth(user: UsersModel): any {
     return this.http.post(`${this.login}`, user);
   }
 
@@ -85,7 +85,7 @@ export class UsersService {
   	Enviar verificación de correo electrónico
   	=============================================*/
 
-  sendEmailVerificationFnc(body: object) {
+  sendEmailVerificationFnc(body: object): any {
     return this.http.post(`${this.sendEmailVerification}`, body);
   }
 
@@ -93,7 +93,7 @@ export class UsersService {
   	Confirmar email de verificación
   	=============================================*/
 
-  confirmEmailVerificationFnc(body: object) {
+  confirmEmailVerificationFnc(body: object): any {
     return this.http.post(`${this.confirmEmailVerification}`, body);
   }
 
@@ -101,7 +101,7 @@ export class UsersService {
   	Actualizar data de usuario
   	=============================================*/
 
-  patchData(id: string, value: object) {
+  patchData(id: string, value: object): any {
     return this.http.patch(`${this.api}users/${id}.json`, value);
   }
 
@@ -109,14 +109,14 @@ export class UsersService {
   	Validar idToken de Autenticación
   	=============================================*/
 
-  authActivate() {
+  authActivate(): any {
     return new Promise((resolve) => {
       /*=============================================
 	  		Validamos que el idToken sea real
 	  		=============================================*/
 
       if (localStorage.getItem('idToken')) {
-        let body = {
+        const body = {
           idToken: localStorage.getItem('idToken'),
         };
 
@@ -127,9 +127,9 @@ export class UsersService {
 	  				=============================================*/
 
             if (localStorage.getItem('expiresIn')) {
-              let expiresIn = Number(localStorage.getItem('expiresIn'));
+              const expiresIn = Number(localStorage.getItem('expiresIn'));
 
-              let expiresDate = new Date();
+              const expiresDate = new Date();
               expiresDate.setTime(expiresIn);
 
               if (expiresDate > new Date()) {
@@ -163,7 +163,7 @@ export class UsersService {
 	Resetear la contraseña
 	=============================================*/
 
-  sendPasswordResetEmailFnc(body: object) {
+  sendPasswordResetEmailFnc(body: object): any {
     return this.http.post(`${this.sendPasswordResetEmail}`, body);
   }
 
@@ -171,7 +171,7 @@ export class UsersService {
 	Confirmar el cambio de la contraseña
 	=============================================*/
 
-  verifyPasswordResetCodeFnc(body: object) {
+  verifyPasswordResetCodeFnc(body: object): any {
     return this.http.post(`${this.verifyPasswordResetCode}`, body);
   }
 
@@ -179,7 +179,7 @@ export class UsersService {
 	Enviar la contraseña
 	=============================================*/
 
-  confirmPasswordResetFnc(body: object) {
+  confirmPasswordResetFnc(body: object): any {
     return this.http.post(`${this.confirmPasswordReset}`, body);
   }
 
@@ -187,7 +187,7 @@ export class UsersService {
 	Cambiar la contraseña
 	=============================================*/
 
-  changePasswordFnc(body: object) {
+  changePasswordFnc(body: object): any {
     return this.http.post(`${this.changePassword}`, body);
   }
 
@@ -195,7 +195,7 @@ export class UsersService {
 	Tomar información de un solo usuario
 	=============================================*/
 
-  getUniqueData(value: string) {
+  getUniqueData(value: string): any {
     return this.http.get(`${this.api}users/${value}.json`);
   }
 
@@ -203,14 +203,14 @@ export class UsersService {
 	Función para agregar productos a la lista de deseos
 	=============================================*/
 
-  addWishlist(product: string) {
+  addWishlist(product: string): any {
     /*=============================================
     	Validamos que el usuario esté autenticado
     	=============================================*/
 
     this.authActivate().then((resp) => {
       if (!resp) {
-        Sweetalert.fnc('error', 'The user must be logged in', null);
+        Sweetalert.fnc('error', 'Debes estar logado', null);
 
         return;
       } else {
@@ -220,20 +220,20 @@ export class UsersService {
         this.getFilterData(
           'idToken',
           localStorage.getItem('idToken')
-        ).subscribe((resp) => {
+        ).subscribe((resp2) => {
           /*=============================================
     			Capturamos el id del usuario
     			=============================================*/
 
-          let id = Object.keys(resp).toString();
+          const id = Object.keys(resp2).toString();
 
-          for (const i in resp) {
+          for (const i in resp2) {
             /*=============================================
       				Pregutnamos si existe una lista de deseos
       				=============================================*/
 
-            if (resp[i].wishlist != undefined) {
-              let wishlist = JSON.parse(resp[i].wishlist);
+            if (resp2[i].wishlist !== undefined) {
+              const wishlist = JSON.parse(resp2[i].wishlist);
 
               let length = 0;
 
@@ -243,7 +243,7 @@ export class UsersService {
 
               if (wishlist.length > 0) {
                 wishlist.forEach((list, index) => {
-                  if (list == product) {
+                  if (list === product) {
                     length--;
                   } else {
                     length++;
@@ -254,28 +254,28 @@ export class UsersService {
     						Preguntamos si no ha agregado este producto a la lista de deseos anteriormente
         					=============================================*/
 
-                if (length != wishlist.length) {
+                if (length !== wishlist.length) {
                   Sweetalert.fnc(
                     'error',
-                    'It already exists on your wishlist',
+                    'Este producto ya está en tus favoritos',
                     null
                   );
                 } else {
                   wishlist.push(product);
 
-                  let body = {
+                  const body = {
                     wishlist: JSON.stringify(wishlist),
                   };
 
-                  this.patchData(id, body).subscribe((resp) => {
-                    if (resp['wishlist'] != '') {
-                      let totalWishlist = Number($('.totalWishlist').html());
+                  this.patchData(id, body).subscribe((resp3) => {
+                    if (resp3['wishlist'] !== '') {
+                      const totalWishlist = Number($('.totalWishlist').html());
 
                       $('.totalWishlist').html(totalWishlist + 1);
 
                       Sweetalert.fnc(
                         'success',
-                        'Product added to wishlist',
+                        'Añadido este producto a tu lista de favoritos',
                         null
                       );
                     }
@@ -284,19 +284,19 @@ export class UsersService {
               } else {
                 wishlist.push(product);
 
-                let body = {
+                const body = {
                   wishlist: JSON.stringify(wishlist),
                 };
 
-                this.patchData(id, body).subscribe((resp) => {
-                  if (resp['wishlist'] != '') {
-                    let totalWishlist = Number($('.totalWishlist').html());
+                this.patchData(id, body).subscribe((resp4) => {
+                  if (resp4['wishlist'] !== '') {
+                    const totalWishlist = Number($('.totalWishlist').html());
 
                     $('.totalWishlist').html(totalWishlist + 1);
 
                     Sweetalert.fnc(
                       'success',
-                      'Product added to wishlist',
+                      'Producto añadido a tu lista de favoritos',
                       null
                     );
                   }
@@ -307,17 +307,21 @@ export class UsersService {
      				Cuando no exista lista de deseos inicialmente
       				=============================================*/
             } else {
-              let body = {
+              const body = {
                 wishlist: `["${product}"]`,
               };
 
-              this.patchData(id, body).subscribe((resp) => {
-                if (resp['wishlist'] != '') {
-                  let totalWishlist = Number($('.totalWishlist').html());
+              this.patchData(id, body).subscribe((resp5) => {
+                if (resp5['wishlist'] !== '') {
+                  const totalWishlist = Number($('.totalWishlist').html());
 
                   $('.totalWishlist').html(totalWishlist + 1);
 
-                  Sweetalert.fnc('success', 'Product added to wishlist', null);
+                  Sweetalert.fnc(
+                    'success',
+                    'Produto añadido a tu lista de favoritos',
+                    null
+                  );
                 }
               });
             }
@@ -331,7 +335,7 @@ export class UsersService {
     Función para agregar productos al carrito de compras
     =============================================*/
 
-  addSoppingCart(item: object) {
+  addSoppingCart(item: object): any {
     /*=============================================
         Filtramos el producto en la data
         =============================================*/
@@ -344,37 +348,41 @@ export class UsersService {
             =============================================*/
 
         for (const i in resp) {
-          /*=============================================
+          if (resp.hasOwnProperty(i)) {
+            /*=============================================
                 Preguntamos primero que el producto tenga stock
                 =============================================*/
 
-          if (resp[i]['stock'] == 0) {
-            Sweetalert.fnc('error', 'Out of Stock', null);
+            if (resp[i]['stock'] === 0) {
+              Sweetalert.fnc('error', 'Sin Stock', null);
 
-            return;
-          }
+              return;
+            }
 
-          /*=============================================
+            /*=============================================
                 Preguntamos si el item detalles viene vacío
                 =============================================*/
 
-          if (item['details'].length == 0) {
-            if (resp[i].specification != '') {
-              let specification = JSON.parse(resp[i].specification);
+            if (item['details'].length === 0) {
+              if (resp[i].specification !== '') {
+                const specification = JSON.parse(resp[i].specification);
 
-              item['details'] = `[{`;
+                item['details'] = `[{`;
 
-              for (const i in specification) {
-                let property = Object.keys(specification[i]).toString();
+                for (const h in specification) {
+                  if (specification.hasOwnProperty(h)) {
+                    const property = Object.keys(specification[i]).toString();
 
-                item[
-                  'details'
-                ] += `"${property}":"${specification[i][property][0]}",`;
+                    item[
+                      'details'
+                    ] += `"${property}":"${specification[h][property][0]}",`;
+                  }
+                }
+
+                item['details'] = item['details'].slice(0, -1);
+
+                item['details'] += `}]`;
               }
-
-              item['details'] = item['details'].slice(0, -1);
-
-              item['details'] += `}]`;
             }
           }
         }
@@ -385,7 +393,7 @@ export class UsersService {
         =============================================*/
 
     if (localStorage.getItem('list')) {
-      let arrayList = JSON.parse(localStorage.getItem('list'));
+      const arrayList = JSON.parse(localStorage.getItem('list'));
 
       /*=============================================
             Preguntar si el producto se repite
@@ -396,8 +404,8 @@ export class UsersService {
 
       for (const i in arrayList) {
         if (
-          arrayList[i].product == item['product'] &&
-          arrayList[i].details.toString() == item['details'].toString()
+          arrayList[i].product === item['product'] &&
+          arrayList[i].details.toString() === item['details'].toString()
         ) {
           count--;
           index = i;
@@ -410,7 +418,7 @@ export class UsersService {
             Validamos si el producto se repite
             =============================================*/
 
-      if (count == arrayList.length) {
+      if (count === arrayList.length) {
         arrayList.push(item);
       } else {
         arrayList[index].unit += item['unit'];
@@ -418,15 +426,15 @@ export class UsersService {
 
       localStorage.setItem('list', JSON.stringify(arrayList));
 
-      Sweetalert.fnc('success', 'Product added to Shopping Cart', item['url']);
+      Sweetalert.fnc('success', 'Producto añadido a tu cesta', item['url']);
     } else {
-      let arrayList = [];
+      const arrayList = [];
 
       arrayList.push(item);
 
       localStorage.setItem('list', JSON.stringify(arrayList));
 
-      Sweetalert.fnc('success', 'Product added to Shopping Cart', item['url']);
+      Sweetalert.fnc('success', 'Producto añadido a tu cesta', item['url']);
     }
   }
 
@@ -434,7 +442,7 @@ export class UsersService {
     Función para tomar la lista de países
     =============================================*/
 
-  getCountries() {
+  getCountries(): any {
     return this.http.get('./assets/json/countries.json');
   }
 }
